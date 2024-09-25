@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+</head>
+<body>
+    <h1>Results for {{ company }} in {{ industry }}</h1>
+    <p>Time Period: {{ time_period }}</p>
+    <p>Ticker Symbol: {{ ticker_symbol }}</p>
+    
+    <!-- Display the plot -->
+    <img src="data:image/png;base64,{{ plot_url }}" alt="Stock Price Plot">
+    
+    <!-- Display the company summary -->
+    <h2>Company Summary</h2>
+    <table>
+        <tr><th>Metric</th><th>Value</th></tr>
+        {% for metric, value in summary_data.items() %}
+        <tr><td>{{ metric }}</td><td>{{ value }}</td></tr>
+        {% endfor %}
+    </table>
+    
+    <a href="/">Back</a>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Business Valuation</title>
+</head>
+<body>
+    <h1>Choose Industry and Company</h1>
+    <form method="post">
+        <label for="industry">Industry:</label>
+        <select name="industry" id="industry" onchange="updateCompanies()">
+            {% for industry in industries.keys() %}
+            <option value="{{ industry }}">{{ industry }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="company">Company:</label>
+        <select name="company" id="company">
+            <!-- Company options will be populated here -->
+        </select>
+        <br>
+        <label for="time_period">Time Period:</label>
+        <select name="time_period" id="time_period">
+            {% for period in time_periods %}
+            <option value="{{ period }}">{{ period }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        const companyDict = {{ industries | tojson | safe }};
+
+        function updateCompanies() {
+            const industrySelect = document.getElementById('industry');
+            const companySelect = document.getElementById('company');
+            const selectedIndustry = industrySelect.value;
+
+            // Clear existing options
+            companySelect.innerHTML = '';
+
+            // Populate new options based on selected industry
+            if (companyDict[selectedIndustry]) {
+                for (const [companyName, ticker] of Object.entries(companyDict[selectedIndustry])) {
+                    const option = document.createElement('option');
+                    option.value = companyName;
+                    option.textContent = companyName;
+                    companySelect.appendChild(option);
+                }
+            }
+        }
+
+        // Initialize companies on page load
+        document.addEventListener('DOMContentLoaded', updateCompanies);
+    </script>
+</body>
+</html>

@@ -40,7 +40,6 @@ function App() {
     setLoading(true);
     try {
       const data = await fetchStockValuation(company);
-      console.log(data)
       setStockValuation(data);
     } catch (error) {
       console.error('Error fetching stock valuation:', error);
@@ -109,13 +108,23 @@ function App() {
             ))}
           </select>
         </div>
-        <button type="submit" disabled={timePeriod === '' || industry === '' || company === ''}>Get Data</button>
+        <button 
+          variant="contained" 
+          color="primary" 
+          type="submit" 
+          disabled={timePeriod === '' || industry === '' || company === ''}
+          style={timePeriod === '' || industry === '' || company === '' ? styles.buttonDisabled : styles.button}
+        >
+          Get Data
+          </button>
       </form>
 
       <button 
+        variant="contained" 
+        color="secondary" 
         onClick={handleFetchValuation} 
         disabled={company === ''} 
-        style={{ marginTop: '1em' }}
+        style={company === '' ? styles.buttonDisabled : styles.button}
       >
         Get Stock Valuation
       </button>
@@ -124,33 +133,28 @@ function App() {
 
       {stockData && (
         <div style={styles.resultContainer}>
-          {loading && <div style={styles.overlay}>
-            <div style={styles.loader}></div>
-          </div>}
-          <div style={loading ? styles.resultLoading : styles.result}>
-            <h2>Results for {stockData.company}</h2>
+          <h2 style={styles.resultHeader}>Results for {stockData.company}</h2>
+          <div style={styles.plotContainer}>
             <img src={`data:image/png;base64,${stockData.plot_url}`} alt="Stock Plot" style={styles.image} />
-            <ul style={styles.list}>
-              {Object.entries(stockData.summary_data).map(([key, value]) => (
-                <li key={key} style={styles.listItem}>{key}: {value}</li>
-              ))}
-            </ul>
           </div>
+          <ul style={styles.list}>
+            {Object.entries(stockData.summary_data).map(([key, value]) => (
+              <li key={key} style={styles.listItem}>{key}: {value}</li>
+            ))}
+          </ul>
         </div>
       )}
 
       {stockValuation && (
         <div style={styles.resultContainer}>
-          <div style={styles.result}>
-            <h2>Results for {stockValuation.Ticker}</h2>
-            <ul style={styles.list}>
-              <li>Company Name: {stockValuation['Company Name']}</li>
-              <li>Sector: {stockValuation.Sector}</li>
-              <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
-              <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
-              <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
-            </ul>
-          </div>
+          <h2 style={styles.resultHeader}>Results for {stockValuation.Ticker}</h2>
+          <ul style={styles.list}>
+            <li>Company Name: {stockValuation['Company Name']}</li>
+            <li>Sector: {stockValuation.Sector}</li>
+            <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
+            <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
+            <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
+          </ul>
         </div>
       )}
     </div>
@@ -160,10 +164,13 @@ function App() {
 const styles = {
   app: {
     fontFamily: 'Arial, sans-serif',
-    maxWidth: '600px',
+    maxWidth: '800px', // Increased width for better layout
     margin: '0 auto',
     padding: '20px',
     textAlign: 'center',
+    backgroundColor: '#f9f9f9', // Light background for better contrast
+    borderRadius: '8px', // Rounded corners
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', // Subtle shadow
   },
   header: {
     color: '#333',
@@ -185,20 +192,64 @@ const styles = {
   },
   select: {
     width: '100%',
-    padding: '8px',
+    padding: '10px', // Increased padding for better touch targets
     borderRadius: '4px',
     border: '1px solid #ccc',
+    fontSize: '16px', // Larger font for better readability
+  },
+  button: {
+    margin:'0.5em',
+    padding: '10px 20px',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#007bff', // Bootstrap primary color
+    color: '#fff',
+    fontSize: '16px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+  },
+  buttonDisabled: {
+    margin:'0.5em',
+    padding: '10px 20px',
+    borderRadius: '4px',
+    border: 'none',
+    color: '#fff',
+    fontSize: '16px',
+    transition: 'background-color 0.3s',
+    backgroundColor: '#ccc',
+    cursor: 'not-allowed',
   },
   resultContainer: {
     position: 'relative',
     marginTop: '20px',
-  },
-  result: {
     textAlign: 'left',
+    padding: '20px',
+    backgroundColor: '#fff', // White background for results
+    borderRadius: '8px',
+    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Subtle shadow for results
+  },
+  resultHeader: {
+    marginBottom: '10px',
+    fontSize: '20px',
+    fontWeight: 'bold',
+  },
+  plotContainer: {
+    display: 'flex',
+    justifyContent: 'center', // Center the plot
+    marginBottom: '15px',
+  },
+  image: {
+    maxWidth: '100%', // Ensure the image is responsive
+    height: 'auto',
+    borderRadius: '4px', // Rounded corners for the image
   },
   list: {
     listStyleType: 'none',
     padding: '0',
+  },
+  listItem: {
+    marginBottom: '8px',
+    fontSize: '16px',
   },
   loader: {
     marginTop: '1em',

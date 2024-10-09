@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 
 const industries = {
@@ -15,12 +14,44 @@ function App() {
   const [industry, setIndustry] = useState('');
   const [company, setCompany] = useState('');
   const [timePeriod, setTimePeriod] = useState('');
-  const [result, setResult] = useState(null);
+  const [stockData, setStockData] = useState(null); // State for stock data
+  const [stockValuation, setStockValuation] = useState(null); // State for stock valuation
   const [loading, setLoading] = useState(false);
+
+  const fetchStockValuation = async (company_name) => {
+    const response = await fetch('/api/stock-valuation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ company_name }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to fetch stock valuation');
+    }
+
+    const data = await response.json();
+    return data;
+  };
+
+  const handleFetchValuation = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchStockValuation(company);
+      console.log(data)
+      setStockValuation(data);
+    } catch (error) {
+      console.error('Error fetching stock valuation:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const response = await fetch('/api/stock-data', {
         method: 'POST',
@@ -39,11 +70,11 @@ function App() {
       }
 
       const data = await response.json();
-      setResult(data);
+      setStockData(data);
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -78,21 +109,46 @@ function App() {
             ))}
           </select>
         </div>
-        <button type="submit" disabled={timePeriod == '' || industry == '' || company == ''}>Get Data</button>
+        <button type="submit" disabled={timePeriod === '' || industry === '' || company === ''}>Get Data</button>
       </form>
 
-      {result && (
+      <button 
+        onClick={handleFetchValuation} 
+        disabled={company === ''} 
+        style={{ marginTop: '1em' }}
+      >
+        Get Stock Valuation
+      </button>
+
+      {loading && <div style={styles.loader}>Loading...</div>}
+
+      {stockData && (
         <div style={styles.resultContainer}>
           {loading && <div style={styles.overlay}>
             <div style={styles.loader}></div>
           </div>}
           <div style={loading ? styles.resultLoading : styles.result}>
-            <h2>Results for {result.ticker_symbol}</h2>
-            <img src={`data:image/png;base64,${result.plot_url}`} alt="Stock Plot" style={styles.image} />
+            <h2>Results for {stockData.company}</h2>
+            <img src={`data:image/png;base64,${stockData.plot_url}`} alt="Stock Plot" style={styles.image} />
             <ul style={styles.list}>
-              {Object.entries(result.summary_data).map(([key, value]) => (
+              {Object.entries(stockData.summary_data).map(([key, value]) => (
                 <li key={key} style={styles.listItem}>{key}: {value}</li>
               ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {stockValuation && (
+        <div style={styles.resultContainer}>
+          <div style={styles.result}>
+            <h2>Results for {stockValuation.Ticker}</h2>
+            <ul style={styles.list}>
+              <li>Company Name: {stockValuation['Company Name']}</li>
+              <li>Sector: {stockValuation.Sector}</li>
+              <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
+              <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
+              <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
             </ul>
           </div>
         </div>
@@ -133,64 +189,20 @@ const styles = {
     borderRadius: '4px',
     border: '1px solid #ccc',
   },
-  button: {
-    padding: '10px 20px',
-    backgroundColor: '#007BFF',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
   resultContainer: {
     position: 'relative',
     marginTop: '20px',
   },
   result: {
     textAlign: 'left',
-    position: 'relative',
-    zIndex: 1,
-  },
-  resultLoading: {
-    textAlign: 'left',
-    position: 'relative',
-    zIndex: 1,
-    opacity: 0.5,
-  },
-  image: {
-    maxWidth: '100%',
-    height: 'auto',
-    marginBottom: '20px',
   },
   list: {
     listStyleType: 'none',
     padding: '0',
   },
-  listItem: {
-    marginBottom: '10px',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2,
-  },
   loader: {
-    border: '16px solid #f3f3f3',
-    borderRadius: '50%',
-    borderTop: '16px solid #3498db',
-    width: '60px',
-    height: '60px',
-    animation: 'spin 2s linear infinite',
-  },
-  '@keyframes spin': {
-    '0%': { transform: 'rotate(0deg)' },
-    '100%': { transform: 'rotate(360deg)' },
+    marginTop: '1em',
+    fontSize: '1.2em',
   },
 };
 

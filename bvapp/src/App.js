@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Plot from 'react-plotly.js';
+import { BounceLoader } from 'react-spinners'; // Import the spinner
 
 const industries = {
   "Information Technology": ["IBM", "Intel", "Microsoft", "Nvidia", "ServiceNow"],
@@ -16,6 +18,7 @@ function App() {
   const [timePeriod, setTimePeriod] = useState('');
   const [stockData, setStockData] = useState(null); // State for stock data
   const [stockValuation, setStockValuation] = useState(null); // State for stock valuation
+  const [stockDataPlot, setStockDataPlot] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const fetchStockValuation = async (company_name) => {
@@ -70,6 +73,7 @@ function App() {
 
       const data = await response.json();
       setStockData(data);
+      setStockDataPlot(JSON.parse(data.plot_url));
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -129,13 +133,18 @@ function App() {
         Get Stock Valuation
       </button>
 
-      {loading && <div style={styles.loader}>Loading...</div>}
+      {loading && (
+        <div style={styles.loader}>
+          <BounceLoader color="#007bff" loading={loading} size={50} /> 
+        </div>
+      )}
 
+      
       {stockData && (
         <div style={styles.resultContainer}>
-          <h2 style={styles.resultHeader}>Results for {stockData.company}</h2>
+          <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
           <div style={styles.plotContainer}>
-            <img src={`data:image/png;base64,${stockData.plot_url}`} alt="Stock Plot" style={styles.image} />
+            <Plot data={stockDataPlot.data} layout={stockDataPlot.layout} />
           </div>
           <ul style={styles.list}>
             {Object.entries(stockData.summary_data).map(([key, value]) => (
@@ -251,9 +260,18 @@ const styles = {
     marginBottom: '8px',
     fontSize: '16px',
   },
-  loader: {
-    marginTop: '1em',
-    fontSize: '1.2em',
+loader: {
+    display: 'flex',
+    justifyContent: 'center', // Center horizontally
+    alignItems: 'center', // Center vertically
+    height: '100vh', // Full height of the viewport
+    position: 'absolute', // Position it absolutely
+    top: 0, // Align to the top
+    left: 0, // Align to the left
+    right: 0, // Align to the right
+    bottom: 0, // Align to the bottom
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Optional: semi-transparent background
+    zIndex: 1000, // Ensure it appears above other content
   },
 };
 

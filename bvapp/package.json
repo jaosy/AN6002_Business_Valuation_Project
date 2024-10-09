@@ -11,9 +11,12 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
     "flask": "^0.2.10",
+    "plotly.js": "^2.35.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-plotly.js": "^2.6.0",
     "react-scripts": "5.0.1",
+    "react-spinners": "^0.14.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

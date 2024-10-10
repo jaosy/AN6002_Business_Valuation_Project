@@ -21,36 +21,6 @@ function App() {
   const [stockDataPlot, setStockDataPlot] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const fetchStockValuation = async (company_name) => {
-    const response = await fetch('/api/stock-valuation', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ company_name }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to fetch stock valuation');
-    }
-
-    const data = await response.json();
-    return data;
-  };
-
-  const handleFetchValuation = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchStockValuation(company);
-      setStockValuation(data);
-    } catch (error) {
-      console.error('Error fetching stock valuation:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -68,7 +38,7 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Error fetching stock data');
       }
 
       const data = await response.json();
@@ -76,6 +46,30 @@ function App() {
       setStockDataPlot(JSON.parse(data.plot));
     } catch (error) {
       console.error("Error fetching data", error);
+    } finally {
+      setLoading(false);
+    }
+
+    try {
+      console.log(company)
+      const response = await fetch('/api/stock-valuation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ company }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch stock valuation');
+      }
+
+      const data = await response.json()
+      setStockValuation(data)
+    } catch (error) {
+      setStockValuation(null)
+      console.error('Error fetching stock valuation:', error);
     } finally {
       setLoading(false);
     }
@@ -122,16 +116,6 @@ function App() {
           Get Data
           </button>
       </form>
-
-      <button 
-        variant="contained" 
-        color="secondary" 
-        onClick={handleFetchValuation} 
-        disabled={company === ''} 
-        style={company === '' ? styles.buttonDisabled : styles.button}
-      >
-        Get Stock Valuation
-      </button>
 
       {loading && (
         <div style={styles.loader}>

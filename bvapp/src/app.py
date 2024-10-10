@@ -51,44 +51,43 @@ valid_time_periods = {
 
 @app.route("/api/stock-data", methods=["POST"])
 def get_stock_data():
+    data = request.json
+    industry = data.get('industry')
+    company = data.get('company')
+    time_period = valid_time_periods[data.get('time_period')]
+    ticker_symbol = company_dict[industry][company]
 
-  data = request.json
-  industry = data.get('industry')
-  company = data.get('company')
-  time_period = valid_time_periods[data.get('time_period')]
-  ticker_symbol = company_dict[industry][company]
-  
-  # Fetch stock data
-  stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
-  
-  # Generate plots
-  plotJSON = generate_timeseries_plot(stock_data, company)
-  
-  # Get company basic info
-  info = get_company_basic_info(ticker_symbol)
+    # Fetch stock data
+    stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
 
-  # Get company summary metrics
-  summary_data = get_company_summary(ticker_symbol, company, time_period)
-  
-  return jsonify({
-      'company': company,
-      'info': info,
-      'ticker_symbol': ticker_symbol,
-      'plot': plotJSON,  # Return the HTML content
-      'summary_data': summary_data
-  })
+    # Generate plots
+    plotJSON = generate_timeseries_plot(stock_data, company)
+
+    # Get company basic info
+    info = get_company_basic_info(ticker_symbol)
+
+    # Get company summary metrics
+    summary_data = get_company_summary(ticker_symbol, company, time_period)
+
+    return jsonify({
+        'company': company,
+        'info': info,
+        'ticker_symbol': ticker_symbol,
+        'plot': plotJSON,  # Return the HTML content
+        'summary_data': summary_data
+    })
 
 
 @app.route("/api/stock-valuation", methods=["POST"])
 def stock_valuation():
     data = request.json
-    company_name = data.get("company_name")  # Get the company name from the request
+    company = data.get("company")  # Get the company name from the request
 
-    if not company_name:
+    if not company:
         return jsonify({"error": "Company name is required."}), 400
 
     # Get the ticker symbol using the get_ticker function
-    ticker_input = get_ticker(company_name)
+    ticker_input = get_ticker(company)
     ticker = ticker_input.upper()
 
     stock = yf.Ticker(ticker)
@@ -102,7 +101,7 @@ def stock_valuation():
         return jsonify({"error": "Financial data not available for this ticker."}), 400
 
     sector = info.get("sector", "Unknown")
-    company_name = info.get("shortName", "Unknown")
+    company = info.get("shortName", "Unknown")
 
     possible_operating_cf_keys = [
         "Total Cash From Operating Activities",
@@ -311,9 +310,6 @@ def stock_valuation():
         print("Enterprise value calculation invalid.")
         return
 
-    # Get total debt (already calculated earlier)
-    # total_debt variable is already defined
-
     # Get Cash and Cash Equivalents
     try:
         cash_and_equiv = balance_sheet.loc['Cash'].iloc[0] + balance_sheet.loc['Short Term Investments'].iloc[0]
@@ -352,17 +348,14 @@ def stock_valuation():
 
     # Prepare output
     data = {
-        'Ticker': [ticker],
-        'Company Name': [company_name],
-        'Sector': [sector],
-        'Enterprise Value (Millions)': [enterprise_value_millions],
-        'Net Debt (Millions)': [net_debt_millions],
-        'Equity Value (Millions)': [equity_value_millions],
-        "Intrinsic Value per Share": intrinsic_value_per_share,
+        'Ticker': ticker,
+        'Company Name': company,
+        'Sector': sector,
+        'Enterprise Value (Millions)': enterprise_value_millions,
+        'Net Debt (Millions)': net_debt_millions,
+        'Equity Value (Millions)': equity_value_millions
     }
-
-    df = pd.DataFrame(data)
-
+    
     return jsonify(data)
 
 

@@ -1,17 +1,14 @@
 from flask import Flask, jsonify, request
 import plotly.graph_objects as go
-import plotly.offline as pyo
 import plotly as plotly
-import tempfile
 import requests
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import io
-import base64
-import matplotlib.pyplot as plt
+
 
 app = Flask(__name__)
+
 
 company_dict = {
     "Information Technology": {
@@ -65,18 +62,20 @@ def get_stock_data():
     stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
 
     # Generate plots
-    # plot_url = generate_timeseries_plot(stock_data, company)
-    graphJSON = generate_timeseries_plot(stock_data, company)
-    print(graphJSON)
+    plotJSON = generate_timeseries_plot(stock_data, company)
 
-    # Get company summary
+    # Get company basic info
+    info = get_company_basic_info(ticker_symbol)
+
+    # Get company summary metrics
     summary_data = get_company_summary(ticker_symbol, company, time_period)
 
     return jsonify(
         {
             "company": company,
+            "info": info,
             "ticker_symbol": ticker_symbol,
-            "plot_url": graphJSON,  # Return the HTML content
+            "plot": plotJSON,  # Return the HTML content
             "summary_data": summary_data,
         }
     )
@@ -164,6 +163,7 @@ def stock_valuation():
     if len(fcf_values) < 2:
         return jsonify({"error": "Not enough data to perform DCF."}), 400
 
+    # Calculate historical EBITDA growth rates
     growth_rates = []
     for i in range(1, len(ebitda_values)):
         if ebitda_values[i - 1] != 0:
@@ -255,6 +255,12 @@ def stock_valuation():
     forecast_years = 5
     forecast_fcf = []
     last_fcf = fcf_values[-1]
+    forecast_ebitda = []
+    last_ebitda = ebitda_values[-1]
+
+    for i in range(1, forecast_years + 1):
+        projected_ebitda = last_ebitda * ((1 + avg_growth_rate) ** i)
+        forecast_ebitda.append(projected_ebitda)
 
     for i in range(1, forecast_years + 1):
         projected_fcf = last_fcf * ((1 + avg_growth_rate) ** i)
@@ -273,6 +279,68 @@ def stock_valuation():
     )
     terminal_value_pv = terminal_value / ((1 + WACC) ** forecast_years)
 
+    # Assume constant D&A and calculate EBIT
+    try:
+        depreciation = income_stmt.loc["Depreciation"].iloc[0]
+    except KeyError:
+        depreciation = 0  # Assume zero if data not available
+
+    forecast_ebit = [ebitda - depreciation for ebitda in forecast_ebitda]
+
+    # Calculate NOPAT (Net Operating Profit After Tax)
+    nopat = [ebit * (1 - tax_rate) for ebit in forecast_ebit]
+
+    # Discount forecasted NOPAT
+    discounted_cash_flows = []
+    for i in range(1, forecast_years + 1):
+        pv = nopat[i - 1] / ((1 + WACC) ** i)
+        discounted_cash_flows.append(pv)
+
+    # Calculate terminal value
+    terminal_value = (
+        nopat[-1] * (1 + terminal_growth_rate) / (WACC - terminal_growth_rate)
+    )
+    terminal_value_pv = terminal_value / ((1 + WACC) ** forecast_years)
+
+    # Check for NaN or infinite terminal value
+    if np.isnan(terminal_value_pv) or np.isinf(terminal_value_pv):
+        print("Terminal value calculation invalid.")
+        return
+
+    # Enterprise Value
+    enterprise_value = sum(discounted_cash_flows) + terminal_value_pv
+
+    # Check for NaN or infinite enterprise value
+    if np.isnan(enterprise_value) or np.isinf(enterprise_value):
+        print("Enterprise value calculation invalid.")
+        return
+
+    # Get total debt (already calculated earlier)
+    # total_debt variable is already defined
+
+    # Get Cash and Cash Equivalents
+    try:
+        cash_and_equiv = (
+            balance_sheet.loc["Cash"].iloc[0]
+            + balance_sheet.loc["Short Term Investments"].iloc[0]
+        )
+    except KeyError:
+        try:
+            cash_and_equiv = balance_sheet.loc["Cash"].iloc[0]
+        except KeyError:
+            cash_and_equiv = 0  # If cash data not available
+
+    # Calculate Net Debt
+    net_debt = total_debt - cash_and_equiv
+
+    # Calculate Equity Value
+    equity_value = enterprise_value - net_debt
+
+    # Convert values to millions
+    enterprise_value_millions = enterprise_value / 1e6
+    net_debt_millions = net_debt / 1e6
+    equity_value_millions = equity_value / 1e6
+
     # DCF value
     dcf_value = sum(discounted_fcf) + terminal_value_pv
 
@@ -284,12 +352,24 @@ def stock_valuation():
 
     intrinsic_value_per_share = dcf_value / shares_outstanding
 
+    # Convert values to millions
+    enterprise_value_millions = enterprise_value / 1e6
+    net_debt_millions = net_debt / 1e6
+    equity_value_millions = equity_value / 1e6
+
+    # Prepare output
     data = {
-        "Ticker": ticker,
-        "Company Name": company_name,
-        "Sector": sector,
+        "Ticker": [ticker],
+        "Company Name": [company_name],
+        "Sector": [sector],
+        "Enterprise Value (Millions)": [enterprise_value_millions],
+        "Net Debt (Millions)": [net_debt_millions],
+        "Equity Value (Millions)": [equity_value_millions],
         "Intrinsic Value per Share": intrinsic_value_per_share,
     }
+
+    df = pd.DataFrame(data)
+
     return jsonify(data)
 
 
@@ -305,7 +385,51 @@ def get_ticker(company_name):
     return company_code
 
 
-def generate_timeseries_plot(df, choosen_company):
+def get_company_basic_info(ticker):
+    stock = yf.Ticker(ticker)
+
+    # Retrieve company info from Yahoo Finance
+    info = stock.info
+
+    # Extract full address information
+    address1 = info.get("address1", "N/A")
+    address2 = info.get("address2", "")
+    city = info.get("city", "")
+    state = info.get("state", "")
+    zip_code = info.get("zip", "")
+    country = info.get("country", "N/A")
+
+    # Format full address
+    full_address = (
+        f"{address1}, {address2} {city}, {state} {zip_code}, {country}".strip(", ")
+    )
+
+    # Extract additional company information
+    full_time_employees = info.get("fullTimeEmployees", "N/A")
+    company_summary = info.get("longBusinessSummary", "N/A")
+
+    # Retrieve governance risk information
+    audit_risk = info.get("auditRisk", "N/A")
+    board_risk = info.get("boardRisk", "N/A")
+    compensation_risk = info.get("compensationRisk", "N/A")
+    shareholder_rights_risk = info.get("shareHolderRightsRisk", "N/A")
+    overall_risk = info.get("overallRisk", "N/A")
+
+    info_dict = {
+        "Full-time Employees": full_time_employees,
+        "Address": full_address,
+        "Company Summary": company_summary,
+        "Audit Risk": audit_risk,
+        "Board Risk": board_risk,
+        "Compensation Risk": compensation_risk,
+        "Shareholder Rights Risk": shareholder_rights_risk,
+        "Overall Risk": overall_risk,
+    }
+
+    return info_dict
+
+
+def generate_timeseries_plot(df, chosen_company):
     # Create a Plotly figure
     fig = go.Figure()
 
@@ -355,7 +479,7 @@ def generate_timeseries_plot(df, choosen_company):
 
     # Update layout with padding
     fig.update_layout(
-        title=f"Stock Price for {choosen_company}",
+        title=f"Stock Price for {chosen_company}",
         xaxis_title="Date",
         yaxis_title="Price (US$)",
         legend_title="Legend",

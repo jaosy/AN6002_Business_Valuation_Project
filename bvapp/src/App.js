@@ -73,7 +73,7 @@ function App() {
 
       const data = await response.json();
       setStockData(data);
-      setStockDataPlot(JSON.parse(data.plot_url));
+      setStockDataPlot(JSON.parse(data.plot));
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -151,6 +151,11 @@ function App() {
               <li key={key} style={styles.listItem}>{key}: {value}</li>
             ))}
           </ul>
+          <ul style={styles.list}>
+            {Object.entries(stockData.info).map(([key, value]) => (
+              <li key={key} style={styles.listItem}>{key}: {value}</li>
+            ))}
+          </ul>
         </div>
       )}
 
@@ -163,6 +168,7 @@ function App() {
             <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
             <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
             <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
+            <li>Intrinsic Value per Share: {stockValuation['Intrinsic Value per Share']}</li>
           </ul>
         </div>
       )}

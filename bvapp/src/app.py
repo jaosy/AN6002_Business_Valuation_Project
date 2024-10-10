@@ -55,35 +55,19 @@ valid_time_periods = {
 @app.route("/api/stock-data", methods=["POST"])
 def get_stock_data():
 
-  data = request.json
-  industry = data.get('industry')
-  company = data.get('company')
-  time_period = valid_time_periods[data.get('time_period')]
-  ticker_symbol = company_dict[industry][company]
-  
-  # Fetch stock data
-  stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
-  
-  # Generate plots
-  #plot_url = generate_timeseries_plot(stock_data, company)
-  graphJSON = generate_timeseries_plot(stock_data, company)
-  print(graphJSON)
-  
-  # Get company summary
-  summary_data = get_company_summary(ticker_symbol, company, time_period)
-  
-  return jsonify({
-      'company': company,
-      'ticker_symbol': ticker_symbol,
-      'plot_url': graphJSON,  # Return the HTML content
-      'summary_data': summary_data
-  })
+    data = request.json
+    industry = data.get("industry")
+    company = data.get("company")
+    time_period = valid_time_periods[data.get("time_period")]
+    ticker_symbol = company_dict[industry][company]
 
     # Fetch stock data
     stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
 
     # Generate plots
-    plot_url = generate_timeseries_plot(stock_data, company)
+    # plot_url = generate_timeseries_plot(stock_data, company)
+    graphJSON = generate_timeseries_plot(stock_data, company)
+    print(graphJSON)
 
     # Get company summary
     summary_data = get_company_summary(ticker_symbol, company, time_period)
@@ -92,7 +76,7 @@ def get_stock_data():
         {
             "company": company,
             "ticker_symbol": ticker_symbol,
-            "plot_url": plot_url,
+            "plot_url": graphJSON,  # Return the HTML content
             "summary_data": summary_data,
         }
     )
@@ -322,62 +306,69 @@ def get_ticker(company_name):
 
 
 def generate_timeseries_plot(df, choosen_company):
-  # Create a Plotly figure
-  fig = go.Figure()
+    # Create a Plotly figure
+    fig = go.Figure()
 
-  # Add the closing price line
-  fig.add_trace(go.Scatter(
-      x=df.index,
-      y=df["Close"],
-      mode='lines',
-      name='Price',
-      line=dict(color='green', width=2),
-      hoverinfo='text',
-      hovertext=df['Close'].apply(lambda x: f'Price: ${x:.2f}')
-  ))
+    # Add the closing price line
+    fig.add_trace(
+        go.Scatter(
+            x=df.index,
+            y=df["Close"],
+            mode="lines",
+            name="Price",
+            line=dict(color="green", width=2),
+            hoverinfo="text",
+            hovertext=df["Close"].apply(lambda x: f"Price: ${x:.2f}"),
+        )
+    )
 
-  # Find max and min values
-  max_value = df["Close"].max()
-  max_date = df["Close"].idxmax()
-  min_value = df["Close"].min()
-  min_date = df["Close"].idxmin()
+    # Find max and min values
+    max_value = df["Close"].max()
+    max_date = df["Close"].idxmax()
+    min_value = df["Close"].min()
+    min_date = df["Close"].idxmin()
 
-  # Add markers for max and min points with adjusted text position
-  fig.add_trace(go.Scatter(
-      x=[max_date],
-      y=[max_value],
-      mode='markers+text',
-      name='Max Price',
-      marker=dict(color='blue', size=10),
-      text=[f'Max: ${max_value:.2f}<br>Date: {max_date.date()}'],
-      textposition='top right',  # Adjusted position
-  ))
+    # Add markers for max and min points with adjusted text position
+    fig.add_trace(
+        go.Scatter(
+            x=[max_date],
+            y=[max_value],
+            mode="markers+text",
+            name="Max Price",
+            marker=dict(color="blue", size=10),
+            text=[f"Max: ${max_value:.2f}<br>Date: {max_date.date()}"],
+            textposition="top right",  # Adjusted position
+        )
+    )
 
-  fig.add_trace(go.Scatter(
-      x=[min_date],
-      y=[min_value],
-      mode='markers+text',
-      name='Min Price',
-      marker=dict(color='red', size=10),
-      text=[f'Min: ${min_value:.2f}<br>Date: {min_date.date()}'],
-      textposition='bottom right',  # Adjusted position
-  ))
+    fig.add_trace(
+        go.Scatter(
+            x=[min_date],
+            y=[min_value],
+            mode="markers+text",
+            name="Min Price",
+            marker=dict(color="red", size=10),
+            text=[f"Min: ${min_value:.2f}<br>Date: {min_date.date()}"],
+            textposition="bottom right",  # Adjusted position
+        )
+    )
 
-  # Update layout with padding
-  fig.update_layout(
-      title=f"Stock Price for {choosen_company}",
-      xaxis_title="Date",
-      yaxis_title="Price (US$)",
-      legend_title="Legend",
-      hovermode="x unified",
-      template="plotly_white",  # Use a clean white template
-      margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
-  )
-  fig.update_yaxes(automargin=True)
-  fig.update_xaxes(automargin=True)
-  
-  graphJSON = plotly.io.to_json(fig, pretty=True)
-  return graphJSON
+    # Update layout with padding
+    fig.update_layout(
+        title=f"Stock Price for {choosen_company}",
+        xaxis_title="Date",
+        yaxis_title="Price (US$)",
+        legend_title="Legend",
+        hovermode="x unified",
+        template="plotly_white",  # Use a clean white template
+        margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
+    )
+    fig.update_yaxes(automargin=True)
+    fig.update_xaxes(automargin=True)
+
+    graphJSON = plotly.io.to_json(fig, pretty=True)
+    return graphJSON
+
 
 def get_company_summary(ticker_symbol, choosen_company, time="1d"):
     """Fetch and return company summary information using yfinance."""
@@ -387,45 +378,49 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
 
     # Create a summary dictionary
     summary = {
-        "P/E Ratio": info.get("trailingPE", "N/A"),
-        "High": stock_data["High"].iloc[-1] if not stock_data.empty else "N/A",
-        "Low": stock_data["Low"].iloc[-1] if not stock_data.empty else "N/A",
-        "Current Price": (
-            stock_data["Close"].iloc[-1] if not stock_data.empty else "N/A"
+        "P/E Ratio": f'{info.get("trailingPE", "N/A"):.2f}',
+        "High": (
+            f'$ {stock_data["High"].iloc[-1]:.2f}' if not stock_data.empty else "N/A"
         ),
-        "Market Cap": info.get("marketCap", "N/A"),
-        "EPS": info.get("trailingEps", "N/A"),
+        "Low": f'$ {stock_data["Low"].iloc[-1]:.2f}' if not stock_data.empty else "N/A",
+        "Current Price": (
+            f'$ {stock_data["Close"].iloc[-1]:.2f}' if not stock_data.empty else "N/A"
+        ),
+        "Market Cap": f'$ {info.get("marketCap", "N/A")/ 1_000_000_000:.2f} mil',
+        "EPS": f'$ {info.get("trailingEps", "N/A"):.2f}',
         "Gross Profit": (
-            company.financials.loc["Gross Profit"][0]
+            f'$ {company.financials.loc["Gross Profit"][0]/1_000_000_000:.2f} mil'
             if "Gross Profit" in company.financials.index
             else "N/A"
         ),
         "Pre-tax Income": (
-            company.financials.loc["Pretax Income"][0]
+            f'$ {company.financials.loc["Pretax Income"][0]/1_000_000_000:.2f} mil'
             if "Pretax Income" in company.financials.index
             else "N/A"
         ),
         "EBITDA": (
-            company.financials.loc["EBITDA"][0]
+            f'$ {company.financials.loc["EBITDA"][0]/1_000_000_000:.2f} mil'
             if "EBITDA" in company.financials.index
             else "N/A"
         ),
         "Total Liabilities": (
-            company.balance_sheet.loc["Total Liabilities Net Minority Interest"][0]
+            f'$ {company.balance_sheet.loc["Total Liabilities Net Minority Interest"][0]/1_000_000_000:.2f} mil'
             if "Total Liabilities Net Minority Interest" in company.balance_sheet.index
             else "N/A"
         ),
         "Total Assets": (
-            company.balance_sheet.loc["Total Assets"][0]
+            f'$ {company.balance_sheet.loc["Total Assets"][0]/1_000_000_000:.2f} mil'
             if "Total Assets" in company.balance_sheet.index
             else "N/A"
         ),
         "End Cash Position": (
-            company.cashflow.loc["End Cash Position"][0]
+            f'$ {company.cashflow.loc["End Cash Position"][0]/1_000_000_000:.2f} mil'
             if "End Cash Position" in company.cashflow.index
             else "N/A"
         ),
     }
+
+    print(summary)
 
     return summary
 

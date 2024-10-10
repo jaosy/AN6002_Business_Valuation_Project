@@ -168,6 +168,7 @@ function App() {
             <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
             <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
             <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
+            <li>Intrinsic Value per Share: {stockValuation['Intrinsic Value per Share']}</li>
           </ul>
         </div>
       )}

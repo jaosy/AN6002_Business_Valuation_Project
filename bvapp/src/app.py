@@ -56,7 +56,7 @@ def get_stock_data():
     company = data.get('company')
     time_period = valid_time_periods[data.get('time_period')]
     ticker_symbol = company_dict[industry][company]
-
+    
     # Fetch stock data
     stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
 
@@ -278,7 +278,7 @@ def stock_valuation():
 
     # Assume constant D&A and calculate EBIT
     try:
-        depreciation = income_stmt.loc['Depreciation'].iloc[0]
+        depreciation = income_stmt.loc["Depreciation"].iloc[0]
     except KeyError:
         depreciation = 0  # Assume zero if data not available
 
@@ -294,7 +294,9 @@ def stock_valuation():
         discounted_cash_flows.append(pv)
 
     # Calculate terminal value
-    terminal_value = nopat[-1] * (1 + terminal_growth_rate) / (WACC - terminal_growth_rate)
+    terminal_value = (
+        nopat[-1] * (1 + terminal_growth_rate) / (WACC - terminal_growth_rate)
+    )
     terminal_value_pv = terminal_value / ((1 + WACC) ** forecast_years)
 
     # Check for NaN or infinite terminal value
@@ -312,10 +314,13 @@ def stock_valuation():
 
     # Get Cash and Cash Equivalents
     try:
-        cash_and_equiv = balance_sheet.loc['Cash'].iloc[0] + balance_sheet.loc['Short Term Investments'].iloc[0]
+        cash_and_equiv = (
+            balance_sheet.loc["Cash"].iloc[0]
+            + balance_sheet.loc["Short Term Investments"].iloc[0]
+        )
     except KeyError:
         try:
-            cash_and_equiv = balance_sheet.loc['Cash'].iloc[0]
+            cash_and_equiv = balance_sheet.loc["Cash"].iloc[0]
         except KeyError:
             cash_and_equiv = 0  # If cash data not available
 
@@ -340,7 +345,7 @@ def stock_valuation():
         return jsonify({"error": "Shares outstanding not available."}), 400
 
     intrinsic_value_per_share = dcf_value / shares_outstanding
-    
+
     # Convert values to millions
     enterprise_value_millions = enterprise_value / 1e6
     net_debt_millions = net_debt / 1e6
@@ -378,36 +383,38 @@ def get_company_basic_info(ticker):
     info = stock.info
 
     # Extract full address information
-    address1 = info.get('address1', 'N/A')
-    address2 = info.get('address2', '')
-    city = info.get('city', '')
-    state = info.get('state', '')
-    zip_code = info.get('zip', '')
-    country = info.get('country', 'N/A')
+    address1 = info.get("address1", "N/A")
+    address2 = info.get("address2", "")
+    city = info.get("city", "")
+    state = info.get("state", "")
+    zip_code = info.get("zip", "")
+    country = info.get("country", "N/A")
 
     # Format full address
-    full_address = f"{address1}, {address2} {city}, {state} {zip_code}, {country}".strip(", ")
+    full_address = (
+        f"{address1}, {address2} {city}, {state} {zip_code}, {country}".strip(", ")
+    )
 
     # Extract additional company information
-    full_time_employees = info.get('fullTimeEmployees', 'N/A')
-    company_summary = info.get('longBusinessSummary', 'N/A')
+    full_time_employees = info.get("fullTimeEmployees", "N/A")
+    company_summary = info.get("longBusinessSummary", "N/A")
 
     # Retrieve governance risk information
-    audit_risk = info.get('auditRisk', 'N/A')
-    board_risk = info.get('boardRisk', 'N/A')
-    compensation_risk = info.get('compensationRisk', 'N/A')
-    shareholder_rights_risk = info.get('shareHolderRightsRisk', 'N/A')
-    overall_risk = info.get('overallRisk', 'N/A')
+    audit_risk = info.get("auditRisk", "N/A")
+    board_risk = info.get("boardRisk", "N/A")
+    compensation_risk = info.get("compensationRisk", "N/A")
+    shareholder_rights_risk = info.get("shareHolderRightsRisk", "N/A")
+    overall_risk = info.get("overallRisk", "N/A")
 
     info_dict = {
-        'Full-time Employees': full_time_employees,
-        'Address': full_address,
-        'Company Summary': company_summary,
-        'Audit Risk': audit_risk,
-        'Board Risk': board_risk,
-        'Compensation Risk': compensation_risk,
-        'Shareholder Rights Risk': shareholder_rights_risk,
-        'Overall Risk': overall_risk
+        "Full-time Employees": full_time_employees,
+        "Address": full_address,
+        "Company Summary": company_summary,
+        "Audit Risk": audit_risk,
+        "Board Risk": board_risk,
+        "Compensation Risk": compensation_risk,
+        "Shareholder Rights Risk": shareholder_rights_risk,
+        "Overall Risk": overall_risk,
     }
 
     return info_dict
@@ -418,15 +425,17 @@ def generate_timeseries_plot(df, chosen_company):
     fig = go.Figure()
 
     # Add the closing price line
-    fig.add_trace(go.Scatter(
-        x=df.index,
-        y=df["Close"],
-        mode='lines',
-        name='Price',
-        line=dict(color='green', width=2),
-        hoverinfo='text',
-        hovertext=df['Close'].apply(lambda x: f'Price: ${x:.2f}')
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=df.index,
+            y=df["Close"],
+            mode="lines",
+            name="Price",
+            line=dict(color="green", width=2),
+            hoverinfo="text",
+            hovertext=df["Close"].apply(lambda x: f"Price: ${x:.2f}"),
+        )
+    )
 
     # Find max and min values
     max_value = df["Close"].max()
@@ -435,25 +444,29 @@ def generate_timeseries_plot(df, chosen_company):
     min_date = df["Close"].idxmin()
 
     # Add markers for max and min points with adjusted text position
-    fig.add_trace(go.Scatter(
-        x=[max_date],
-        y=[max_value],
-        mode='markers+text',
-        name='Max Price',
-        marker=dict(color='blue', size=10),
-        text=[f'Max: ${max_value:.2f}<br>Date: {max_date.date()}'],
-        textposition='top right',  # Adjusted position
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=[max_date],
+            y=[max_value],
+            mode="markers+text",
+            name="Max Price",
+            marker=dict(color="blue", size=10),
+            text=[f"Max: ${max_value:.2f}<br>Date: {max_date.date()}"],
+            textposition="top right",  # Adjusted position
+        )
+    )
 
-    fig.add_trace(go.Scatter(
-        x=[min_date],
-        y=[min_value],
-        mode='markers+text',
-        name='Min Price',
-        marker=dict(color='red', size=10),
-        text=[f'Min: ${min_value:.2f}<br>Date: {min_date.date()}'],
-        textposition='bottom right',  # Adjusted position
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=[min_date],
+            y=[min_value],
+            mode="markers+text",
+            name="Min Price",
+            marker=dict(color="red", size=10),
+            text=[f"Min: ${min_value:.2f}<br>Date: {min_date.date()}"],
+            textposition="bottom right",  # Adjusted position
+        )
+    )
 
     # Update layout with padding
     fig.update_layout(
@@ -471,6 +484,7 @@ def generate_timeseries_plot(df, chosen_company):
     graphJSON = plotly.io.to_json(fig, pretty=True)
     return graphJSON
 
+
 def get_company_summary(ticker_symbol, choosen_company, time="1d"):
     """Fetch and return company summary information using yfinance."""
     company = yf.Ticker(ticker_symbol)
@@ -479,45 +493,49 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
 
     # Create a summary dictionary
     summary = {
-        "P/E Ratio": info.get("trailingPE", "N/A"),
-        "High": stock_data["High"].iloc[-1] if not stock_data.empty else "N/A",
-        "Low": stock_data["Low"].iloc[-1] if not stock_data.empty else "N/A",
-        "Current Price": (
-            stock_data["Close"].iloc[-1] if not stock_data.empty else "N/A"
+        "P/E Ratio": f'{info.get("trailingPE", "N/A"):.2f}',
+        "High": (
+            f'$ {stock_data["High"].iloc[-1]:.2f}' if not stock_data.empty else "N/A"
         ),
-        "Market Cap": info.get("marketCap", "N/A"),
-        "EPS": info.get("trailingEps", "N/A"),
+        "Low": f'$ {stock_data["Low"].iloc[-1]:.2f}' if not stock_data.empty else "N/A",
+        "Current Price": (
+            f'$ {stock_data["Close"].iloc[-1]:.2f}' if not stock_data.empty else "N/A"
+        ),
+        "Market Cap": f'$ {info.get("marketCap", "N/A")/ 1_000_000_000:.2f} mil',
+        "EPS": f'$ {info.get("trailingEps", "N/A"):.2f}',
         "Gross Profit": (
-            company.financials.loc["Gross Profit"][0]
+            f'$ {company.financials.loc["Gross Profit"][0]/1_000_000_000:.2f} mil'
             if "Gross Profit" in company.financials.index
             else "N/A"
         ),
         "Pre-tax Income": (
-            company.financials.loc["Pretax Income"][0]
+            f'$ {company.financials.loc["Pretax Income"][0]/1_000_000_000:.2f} mil'
             if "Pretax Income" in company.financials.index
             else "N/A"
         ),
         "EBITDA": (
-            company.financials.loc["EBITDA"][0]
+            f'$ {company.financials.loc["EBITDA"][0]/1_000_000_000:.2f} mil'
             if "EBITDA" in company.financials.index
             else "N/A"
         ),
         "Total Liabilities": (
-            company.balance_sheet.loc["Total Liabilities Net Minority Interest"][0]
+            f'$ {company.balance_sheet.loc["Total Liabilities Net Minority Interest"][0]/1_000_000_000:.2f} mil'
             if "Total Liabilities Net Minority Interest" in company.balance_sheet.index
             else "N/A"
         ),
         "Total Assets": (
-            company.balance_sheet.loc["Total Assets"][0]
+            f'$ {company.balance_sheet.loc["Total Assets"][0]/1_000_000_000:.2f} mil'
             if "Total Assets" in company.balance_sheet.index
             else "N/A"
         ),
         "End Cash Position": (
-            company.cashflow.loc["End Cash Position"][0]
+            f'$ {company.cashflow.loc["End Cash Position"][0]/1_000_000_000:.2f} mil'
             if "End Cash Position" in company.cashflow.index
             else "N/A"
         ),
     }
+
+    print(summary)
 
     return summary
 

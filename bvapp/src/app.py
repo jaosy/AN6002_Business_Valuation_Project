@@ -11,7 +11,9 @@ import io
 import base64
 import matplotlib.pyplot as plt
 
+
 app = Flask(__name__)
+
 
 company_dict = {
     "Information Technology": {
@@ -65,37 +67,21 @@ def get_stock_data():
   stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
   
   # Generate plots
-  #plot_url = generate_timeseries_plot(stock_data, company)
-  graphJSON = generate_timeseries_plot(stock_data, company)
-  print(graphJSON)
+  plotJSON = generate_timeseries_plot(stock_data, company)
   
-  # Get company summary
+  # Get company basic info
+  info = get_company_basic_info(ticker_symbol)
+
+  # Get company summary metrics
   summary_data = get_company_summary(ticker_symbol, company, time_period)
   
   return jsonify({
       'company': company,
+      'info': info,
       'ticker_symbol': ticker_symbol,
-      'plot_url': graphJSON,  # Return the HTML content
+      'plot': plotJSON,  # Return the HTML content
       'summary_data': summary_data
   })
-
-    # Fetch stock data
-    stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
-
-    # Generate plots
-    plot_url = generate_timeseries_plot(stock_data, company)
-
-    # Get company summary
-    summary_data = get_company_summary(ticker_symbol, company, time_period)
-
-    return jsonify(
-        {
-            "company": company,
-            "ticker_symbol": ticker_symbol,
-            "plot_url": plot_url,
-            "summary_data": summary_data,
-        }
-    )
 
 
 @app.route("/api/stock-valuation", methods=["POST"])
@@ -321,63 +307,104 @@ def get_ticker(company_name):
     return company_code
 
 
-def generate_timeseries_plot(df, choosen_company):
-  # Create a Plotly figure
-  fig = go.Figure()
+def get_company_basic_info(ticker):
+    stock = yf.Ticker(ticker)
 
-  # Add the closing price line
-  fig.add_trace(go.Scatter(
-      x=df.index,
-      y=df["Close"],
-      mode='lines',
-      name='Price',
-      line=dict(color='green', width=2),
-      hoverinfo='text',
-      hovertext=df['Close'].apply(lambda x: f'Price: ${x:.2f}')
-  ))
+    # Retrieve company info from Yahoo Finance
+    info = stock.info
 
-  # Find max and min values
-  max_value = df["Close"].max()
-  max_date = df["Close"].idxmax()
-  min_value = df["Close"].min()
-  min_date = df["Close"].idxmin()
+    # Extract full address information
+    address1 = info.get('address1', 'N/A')
+    address2 = info.get('address2', '')
+    city = info.get('city', '')
+    state = info.get('state', '')
+    zip_code = info.get('zip', '')
+    country = info.get('country', 'N/A')
 
-  # Add markers for max and min points with adjusted text position
-  fig.add_trace(go.Scatter(
-      x=[max_date],
-      y=[max_value],
-      mode='markers+text',
-      name='Max Price',
-      marker=dict(color='blue', size=10),
-      text=[f'Max: ${max_value:.2f}<br>Date: {max_date.date()}'],
-      textposition='top right',  # Adjusted position
-  ))
+    # Format full address
+    full_address = f"{address1}, {address2} {city}, {state} {zip_code}, {country}".strip(", ")
 
-  fig.add_trace(go.Scatter(
-      x=[min_date],
-      y=[min_value],
-      mode='markers+text',
-      name='Min Price',
-      marker=dict(color='red', size=10),
-      text=[f'Min: ${min_value:.2f}<br>Date: {min_date.date()}'],
-      textposition='bottom right',  # Adjusted position
-  ))
+    # Extract additional company information
+    full_time_employees = info.get('fullTimeEmployees', 'N/A')
+    company_summary = info.get('longBusinessSummary', 'N/A')
 
-  # Update layout with padding
-  fig.update_layout(
-      title=f"Stock Price for {choosen_company}",
-      xaxis_title="Date",
-      yaxis_title="Price (US$)",
-      legend_title="Legend",
-      hovermode="x unified",
-      template="plotly_white",  # Use a clean white template
-      margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
-  )
-  fig.update_yaxes(automargin=True)
-  fig.update_xaxes(automargin=True)
-  
-  graphJSON = plotly.io.to_json(fig, pretty=True)
-  return graphJSON
+    # Retrieve governance risk information
+    audit_risk = info.get('auditRisk', 'N/A')
+    board_risk = info.get('boardRisk', 'N/A')
+    compensation_risk = info.get('compensationRisk', 'N/A')
+    shareholder_rights_risk = info.get('shareHolderRightsRisk', 'N/A')
+    overall_risk = info.get('overallRisk', 'N/A')
+
+    info_dict = {
+        'Full-time Employees': full_time_employees,
+        'Company Summary': company_summary,
+        'Audit Risk': audit_risk,
+        'Board Risk': board_risk,
+        'Compensation Risk': compensation_risk,
+        'Shareholder Rights Risk': shareholder_rights_risk,
+        'Overall Risk': overall_risk
+    }
+
+    return info_dict
+
+
+def generate_timeseries_plot(df, chosen_company):
+    # Create a Plotly figure
+    fig = go.Figure()
+
+    # Add the closing price line
+    fig.add_trace(go.Scatter(
+        x=df.index,
+        y=df["Close"],
+        mode='lines',
+        name='Price',
+        line=dict(color='green', width=2),
+        hoverinfo='text',
+        hovertext=df['Close'].apply(lambda x: f'Price: ${x:.2f}')
+    ))
+
+    # Find max and min values
+    max_value = df["Close"].max()
+    max_date = df["Close"].idxmax()
+    min_value = df["Close"].min()
+    min_date = df["Close"].idxmin()
+
+    # Add markers for max and min points with adjusted text position
+    fig.add_trace(go.Scatter(
+        x=[max_date],
+        y=[max_value],
+        mode='markers+text',
+        name='Max Price',
+        marker=dict(color='blue', size=10),
+        text=[f'Max: ${max_value:.2f}<br>Date: {max_date.date()}'],
+        textposition='top right',  # Adjusted position
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=[min_date],
+        y=[min_value],
+        mode='markers+text',
+        name='Min Price',
+        marker=dict(color='red', size=10),
+        text=[f'Min: ${min_value:.2f}<br>Date: {min_date.date()}'],
+        textposition='bottom right',  # Adjusted position
+    ))
+
+    # Update layout with padding
+    fig.update_layout(
+        title=f"Stock Price for {chosen_company}",
+        xaxis_title="Date",
+        yaxis_title="Price (US$)",
+        legend_title="Legend",
+        hovermode="x unified",
+        template="plotly_white",  # Use a clean white template
+        margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
+    )
+    fig.update_yaxes(automargin=True)
+    fig.update_xaxes(automargin=True)
+
+    graphJSON = plotly.io.to_json(fig, pretty=True)
+    return graphJSON
 
 def get_company_summary(ticker_symbol, choosen_company, time="1d"):
     """Fetch and return company summary information using yfinance."""

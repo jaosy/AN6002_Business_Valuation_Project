@@ -73,7 +73,7 @@ function App() {
 
       const data = await response.json();
       setStockData(data);
-      setStockDataPlot(JSON.parse(data.plot_url));
+      setStockDataPlot(JSON.parse(data.plot));
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -148,6 +148,11 @@ function App() {
           </div>
           <ul style={styles.list}>
             {Object.entries(stockData.summary_data).map(([key, value]) => (
+              <li key={key} style={styles.listItem}>{key}: {value}</li>
+            ))}
+          </ul>
+          <ul style={styles.list}>
+            {Object.entries(stockData.info).map(([key, value]) => (
               <li key={key} style={styles.listItem}>{key}: {value}</li>
             ))}
           </ul>

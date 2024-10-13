@@ -1,0 +1,2014 @@
+{
+  "A": {
+    "GICS Sector": "Health Care",
+    "Security": "Agilent Technologies"
+  },
+  "AAPL": {
+    "GICS Sector": "Information Technology",
+    "Security": "Apple Inc."
+  },
+  "ABBV": {
+    "GICS Sector": "Health Care",
+    "Security": "AbbVie"
+  },
+  "ABNB": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Airbnb"
+  },
+  "ABT": {
+    "GICS Sector": "Health Care",
+    "Security": "Abbott Laboratories"
+  },
+  "ACGL": {
+    "GICS Sector": "Financials",
+    "Security": "Arch Capital Group"
+  },
+  "ACN": {
+    "GICS Sector": "Information Technology",
+    "Security": "Accenture"
+  },
+  "ADBE": {
+    "GICS Sector": "Information Technology",
+    "Security": "Adobe Inc."
+  },
+  "ADI": {
+    "GICS Sector": "Information Technology",
+    "Security": "Analog Devices"
+  },
+  "ADM": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Archer Daniels Midland"
+  },
+  "ADP": {
+    "GICS Sector": "Industrials",
+    "Security": "Automatic Data Processing"
+  },
+  "ADSK": {
+    "GICS Sector": "Information Technology",
+    "Security": "Autodesk"
+  },
+  "AEE": {
+    "GICS Sector": "Utilities",
+    "Security": "Ameren"
+  },
+  "AEP": {
+    "GICS Sector": "Utilities",
+    "Security": "American Electric Power"
+  },
+  "AES": {
+    "GICS Sector": "Utilities",
+    "Security": "AES Corporation"
+  },
+  "AFL": {
+    "GICS Sector": "Financials",
+    "Security": "Aflac"
+  },
+  "AIG": {
+    "GICS Sector": "Financials",
+    "Security": "American International Group"
+  },
+  "AIZ": {
+    "GICS Sector": "Financials",
+    "Security": "Assurant"
+  },
+  "AJG": {
+    "GICS Sector": "Financials",
+    "Security": "Arthur J. Gallagher & Co."
+  },
+  "AKAM": {
+    "GICS Sector": "Information Technology",
+    "Security": "Akamai Technologies"
+  },
+  "ALB": {
+    "GICS Sector": "Materials",
+    "Security": "Albemarle Corporation"
+  },
+  "ALGN": {
+    "GICS Sector": "Health Care",
+    "Security": "Align Technology"
+  },
+  "ALL": {
+    "GICS Sector": "Financials",
+    "Security": "Allstate"
+  },
+  "ALLE": {
+    "GICS Sector": "Industrials",
+    "Security": "Allegion"
+  },
+  "AMAT": {
+    "GICS Sector": "Information Technology",
+    "Security": "Applied Materials"
+  },
+  "AMCR": {
+    "GICS Sector": "Materials",
+    "Security": "Amcor"
+  },
+  "AMD": {
+    "GICS Sector": "Information Technology",
+    "Security": "Advanced Micro Devices"
+  },
+  "AME": {
+    "GICS Sector": "Industrials",
+    "Security": "Ametek"
+  },
+  "AMGN": {
+    "GICS Sector": "Health Care",
+    "Security": "Amgen"
+  },
+  "AMP": {
+    "GICS Sector": "Financials",
+    "Security": "Ameriprise Financial"
+  },
+  "AMT": {
+    "GICS Sector": "Real Estate",
+    "Security": "American Tower"
+  },
+  "AMTM": {
+    "GICS Sector": "Industrials",
+    "Security": "Amentum"
+  },
+  "AMZN": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Amazon"
+  },
+  "ANET": {
+    "GICS Sector": "Information Technology",
+    "Security": "Arista Networks"
+  },
+  "ANSS": {
+    "GICS Sector": "Information Technology",
+    "Security": "Ansys"
+  },
+  "AON": {
+    "GICS Sector": "Financials",
+    "Security": "Aon"
+  },
+  "AOS": {
+    "GICS Sector": "Industrials",
+    "Security": "A. O. Smith"
+  },
+  "APA": {
+    "GICS Sector": "Energy",
+    "Security": "APA Corporation"
+  },
+  "APD": {
+    "GICS Sector": "Materials",
+    "Security": "Air Products"
+  },
+  "APH": {
+    "GICS Sector": "Information Technology",
+    "Security": "Amphenol"
+  },
+  "APTV": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Aptiv"
+  },
+  "ARE": {
+    "GICS Sector": "Real Estate",
+    "Security": "Alexandria Real Estate Equities"
+  },
+  "ATO": {
+    "GICS Sector": "Utilities",
+    "Security": "Atmos Energy"
+  },
+  "AVB": {
+    "GICS Sector": "Real Estate",
+    "Security": "AvalonBay Communities"
+  },
+  "AVGO": {
+    "GICS Sector": "Information Technology",
+    "Security": "Broadcom"
+  },
+  "AVY": {
+    "GICS Sector": "Materials",
+    "Security": "Avery Dennison"
+  },
+  "AWK": {
+    "GICS Sector": "Utilities",
+    "Security": "American Water Works"
+  },
+  "AXON": {
+    "GICS Sector": "Industrials",
+    "Security": "Axon Enterprise"
+  },
+  "AXP": {
+    "GICS Sector": "Financials",
+    "Security": "American Express"
+  },
+  "AZO": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "AutoZone"
+  },
+  "BA": {
+    "GICS Sector": "Industrials",
+    "Security": "Boeing"
+  },
+  "BAC": {
+    "GICS Sector": "Financials",
+    "Security": "Bank of America"
+  },
+  "BALL": {
+    "GICS Sector": "Materials",
+    "Security": "Ball Corporation"
+  },
+  "BAX": {
+    "GICS Sector": "Health Care",
+    "Security": "Baxter International"
+  },
+  "BBY": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Best Buy"
+  },
+  "BDX": {
+    "GICS Sector": "Health Care",
+    "Security": "Becton Dickinson"
+  },
+  "BEN": {
+    "GICS Sector": "Financials",
+    "Security": "Franklin Resources"
+  },
+  "BF.B": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Brown–Forman"
+  },
+  "BG": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Bunge Global"
+  },
+  "BIIB": {
+    "GICS Sector": "Health Care",
+    "Security": "Biogen"
+  },
+  "BK": {
+    "GICS Sector": "Financials",
+    "Security": "BNY Mellon"
+  },
+  "BKNG": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Booking Holdings"
+  },
+  "BKR": {
+    "GICS Sector": "Energy",
+    "Security": "Baker Hughes"
+  },
+  "BLDR": {
+    "GICS Sector": "Industrials",
+    "Security": "Builders FirstSource"
+  },
+  "BLK": {
+    "GICS Sector": "Financials",
+    "Security": "BlackRock"
+  },
+  "BMY": {
+    "GICS Sector": "Health Care",
+    "Security": "Bristol Myers Squibb"
+  },
+  "BR": {
+    "GICS Sector": "Industrials",
+    "Security": "Broadridge Financial Solutions"
+  },
+  "BRK.B": {
+    "GICS Sector": "Financials",
+    "Security": "Berkshire Hathaway"
+  },
+  "BRO": {
+    "GICS Sector": "Financials",
+    "Security": "Brown & Brown"
+  },
+  "BSX": {
+    "GICS Sector": "Health Care",
+    "Security": "Boston Scientific"
+  },
+  "BWA": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "BorgWarner"
+  },
+  "BX": {
+    "GICS Sector": "Financials",
+    "Security": "Blackstone Inc."
+  },
+  "BXP": {
+    "GICS Sector": "Real Estate",
+    "Security": "BXP, Inc."
+  },
+  "C": {
+    "GICS Sector": "Financials",
+    "Security": "Citigroup"
+  },
+  "CAG": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Conagra Brands"
+  },
+  "CAH": {
+    "GICS Sector": "Health Care",
+    "Security": "Cardinal Health"
+  },
+  "CARR": {
+    "GICS Sector": "Industrials",
+    "Security": "Carrier Global"
+  },
+  "CAT": {
+    "GICS Sector": "Industrials",
+    "Security": "Caterpillar Inc."
+  },
+  "CB": {
+    "GICS Sector": "Financials",
+    "Security": "Chubb Limited"
+  },
+  "CBOE": {
+    "GICS Sector": "Financials",
+    "Security": "Cboe Global Markets"
+  },
+  "CBRE": {
+    "GICS Sector": "Real Estate",
+    "Security": "CBRE Group"
+  },
+  "CCI": {
+    "GICS Sector": "Real Estate",
+    "Security": "Crown Castle"
+  },
+  "CCL": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Carnival"
+  },
+  "CDNS": {
+    "GICS Sector": "Information Technology",
+    "Security": "Cadence Design Systems"
+  },
+  "CDW": {
+    "GICS Sector": "Information Technology",
+    "Security": "CDW"
+  },
+  "CE": {
+    "GICS Sector": "Materials",
+    "Security": "Celanese"
+  },
+  "CEG": {
+    "GICS Sector": "Utilities",
+    "Security": "Constellation Energy"
+  },
+  "CF": {
+    "GICS Sector": "Materials",
+    "Security": "CF Industries"
+  },
+  "CFG": {
+    "GICS Sector": "Financials",
+    "Security": "Citizens Financial Group"
+  },
+  "CHD": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Church & Dwight"
+  },
+  "CHRW": {
+    "GICS Sector": "Industrials",
+    "Security": "C.H. Robinson"
+  },
+  "CHTR": {
+    "GICS Sector": "Communication Services",
+    "Security": "Charter Communications"
+  },
+  "CI": {
+    "GICS Sector": "Health Care",
+    "Security": "Cigna"
+  },
+  "CINF": {
+    "GICS Sector": "Financials",
+    "Security": "Cincinnati Financial"
+  },
+  "CL": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Colgate-Palmolive"
+  },
+  "CLX": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Clorox"
+  },
+  "CMCSA": {
+    "GICS Sector": "Communication Services",
+    "Security": "Comcast"
+  },
+  "CME": {
+    "GICS Sector": "Financials",
+    "Security": "CME Group"
+  },
+  "CMG": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Chipotle Mexican Grill"
+  },
+  "CMI": {
+    "GICS Sector": "Industrials",
+    "Security": "Cummins"
+  },
+  "CMS": {
+    "GICS Sector": "Utilities",
+    "Security": "CMS Energy"
+  },
+  "CNC": {
+    "GICS Sector": "Health Care",
+    "Security": "Centene Corporation"
+  },
+  "CNP": {
+    "GICS Sector": "Utilities",
+    "Security": "CenterPoint Energy"
+  },
+  "COF": {
+    "GICS Sector": "Financials",
+    "Security": "Capital One"
+  },
+  "COO": {
+    "GICS Sector": "Health Care",
+    "Security": "Cooper Companies (The)"
+  },
+  "COP": {
+    "GICS Sector": "Energy",
+    "Security": "ConocoPhillips"
+  },
+  "COR": {
+    "GICS Sector": "Health Care",
+    "Security": "Cencora"
+  },
+  "COST": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Costco"
+  },
+  "CPAY": {
+    "GICS Sector": "Financials",
+    "Security": "Corpay"
+  },
+  "CPB": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Campbell Soup Company"
+  },
+  "CPRT": {
+    "GICS Sector": "Industrials",
+    "Security": "Copart"
+  },
+  "CPT": {
+    "GICS Sector": "Real Estate",
+    "Security": "Camden Property Trust"
+  },
+  "CRL": {
+    "GICS Sector": "Health Care",
+    "Security": "Charles River Laboratories"
+  },
+  "CRM": {
+    "GICS Sector": "Information Technology",
+    "Security": "Salesforce"
+  },
+  "CRWD": {
+    "GICS Sector": "Information Technology",
+    "Security": "CrowdStrike"
+  },
+  "CSCO": {
+    "GICS Sector": "Information Technology",
+    "Security": "Cisco"
+  },
+  "CSGP": {
+    "GICS Sector": "Real Estate",
+    "Security": "CoStar Group"
+  },
+  "CSX": {
+    "GICS Sector": "Industrials",
+    "Security": "CSX Corporation"
+  },
+  "CTAS": {
+    "GICS Sector": "Industrials",
+    "Security": "Cintas"
+  },
+  "CTLT": {
+    "GICS Sector": "Health Care",
+    "Security": "Catalent"
+  },
+  "CTRA": {
+    "GICS Sector": "Energy",
+    "Security": "Coterra"
+  },
+  "CTSH": {
+    "GICS Sector": "Information Technology",
+    "Security": "Cognizant"
+  },
+  "CTVA": {
+    "GICS Sector": "Materials",
+    "Security": "Corteva"
+  },
+  "CVS": {
+    "GICS Sector": "Health Care",
+    "Security": "CVS Health"
+  },
+  "CVX": {
+    "GICS Sector": "Energy",
+    "Security": "Chevron Corporation"
+  },
+  "CZR": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Caesars Entertainment"
+  },
+  "D": {
+    "GICS Sector": "Utilities",
+    "Security": "Dominion Energy"
+  },
+  "DAL": {
+    "GICS Sector": "Industrials",
+    "Security": "Delta Air Lines"
+  },
+  "DAY": {
+    "GICS Sector": "Industrials",
+    "Security": "Dayforce"
+  },
+  "DD": {
+    "GICS Sector": "Materials",
+    "Security": "DuPont"
+  },
+  "DE": {
+    "GICS Sector": "Industrials",
+    "Security": "Deere & Company"
+  },
+  "DECK": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Deckers Brands"
+  },
+  "DELL": {
+    "GICS Sector": "Information Technology",
+    "Security": "Dell Technologies"
+  },
+  "DFS": {
+    "GICS Sector": "Financials",
+    "Security": "Discover Financial"
+  },
+  "DG": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Dollar General"
+  },
+  "DGX": {
+    "GICS Sector": "Health Care",
+    "Security": "Quest Diagnostics"
+  },
+  "DHI": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "D. R. Horton"
+  },
+  "DHR": {
+    "GICS Sector": "Health Care",
+    "Security": "Danaher Corporation"
+  },
+  "DIS": {
+    "GICS Sector": "Communication Services",
+    "Security": "Walt Disney Company (The)"
+  },
+  "DLR": {
+    "GICS Sector": "Real Estate",
+    "Security": "Digital Realty"
+  },
+  "DLTR": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Dollar Tree"
+  },
+  "DOC": {
+    "GICS Sector": "Real Estate",
+    "Security": "Healthpeak Properties"
+  },
+  "DOV": {
+    "GICS Sector": "Industrials",
+    "Security": "Dover Corporation"
+  },
+  "DOW": {
+    "GICS Sector": "Materials",
+    "Security": "Dow Inc."
+  },
+  "DPZ": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Domino's"
+  },
+  "DRI": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Darden Restaurants"
+  },
+  "DTE": {
+    "GICS Sector": "Utilities",
+    "Security": "DTE Energy"
+  },
+  "DUK": {
+    "GICS Sector": "Utilities",
+    "Security": "Duke Energy"
+  },
+  "DVA": {
+    "GICS Sector": "Health Care",
+    "Security": "DaVita"
+  },
+  "DVN": {
+    "GICS Sector": "Energy",
+    "Security": "Devon Energy"
+  },
+  "DXCM": {
+    "GICS Sector": "Health Care",
+    "Security": "Dexcom"
+  },
+  "EA": {
+    "GICS Sector": "Communication Services",
+    "Security": "Electronic Arts"
+  },
+  "EBAY": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "eBay"
+  },
+  "ECL": {
+    "GICS Sector": "Materials",
+    "Security": "Ecolab"
+  },
+  "ED": {
+    "GICS Sector": "Utilities",
+    "Security": "Consolidated Edison"
+  },
+  "EFX": {
+    "GICS Sector": "Industrials",
+    "Security": "Equifax"
+  },
+  "EG": {
+    "GICS Sector": "Financials",
+    "Security": "Everest Group"
+  },
+  "EIX": {
+    "GICS Sector": "Utilities",
+    "Security": "Edison International"
+  },
+  "EL": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Estée Lauder Companies (The)"
+  },
+  "ELV": {
+    "GICS Sector": "Health Care",
+    "Security": "Elevance Health"
+  },
+  "EMN": {
+    "GICS Sector": "Materials",
+    "Security": "Eastman Chemical Company"
+  },
+  "EMR": {
+    "GICS Sector": "Industrials",
+    "Security": "Emerson Electric"
+  },
+  "ENPH": {
+    "GICS Sector": "Information Technology",
+    "Security": "Enphase Energy"
+  },
+  "EOG": {
+    "GICS Sector": "Energy",
+    "Security": "EOG Resources"
+  },
+  "EPAM": {
+    "GICS Sector": "Information Technology",
+    "Security": "EPAM Systems"
+  },
+  "EQIX": {
+    "GICS Sector": "Real Estate",
+    "Security": "Equinix"
+  },
+  "EQR": {
+    "GICS Sector": "Real Estate",
+    "Security": "Equity Residential"
+  },
+  "EQT": {
+    "GICS Sector": "Energy",
+    "Security": "EQT Corporation"
+  },
+  "ERIE": {
+    "GICS Sector": "Financials",
+    "Security": "Erie Indemnity"
+  },
+  "ES": {
+    "GICS Sector": "Utilities",
+    "Security": "Eversource Energy"
+  },
+  "ESS": {
+    "GICS Sector": "Real Estate",
+    "Security": "Essex Property Trust"
+  },
+  "ETN": {
+    "GICS Sector": "Industrials",
+    "Security": "Eaton Corporation"
+  },
+  "ETR": {
+    "GICS Sector": "Utilities",
+    "Security": "Entergy"
+  },
+  "EVRG": {
+    "GICS Sector": "Utilities",
+    "Security": "Evergy"
+  },
+  "EW": {
+    "GICS Sector": "Health Care",
+    "Security": "Edwards Lifesciences"
+  },
+  "EXC": {
+    "GICS Sector": "Utilities",
+    "Security": "Exelon"
+  },
+  "EXPD": {
+    "GICS Sector": "Industrials",
+    "Security": "Expeditors International"
+  },
+  "EXPE": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Expedia Group"
+  },
+  "EXR": {
+    "GICS Sector": "Real Estate",
+    "Security": "Extra Space Storage"
+  },
+  "F": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Ford Motor Company"
+  },
+  "FANG": {
+    "GICS Sector": "Energy",
+    "Security": "Diamondback Energy"
+  },
+  "FAST": {
+    "GICS Sector": "Industrials",
+    "Security": "Fastenal"
+  },
+  "FCX": {
+    "GICS Sector": "Materials",
+    "Security": "Freeport-McMoRan"
+  },
+  "FDS": {
+    "GICS Sector": "Financials",
+    "Security": "FactSet"
+  },
+  "FDX": {
+    "GICS Sector": "Industrials",
+    "Security": "FedEx"
+  },
+  "FE": {
+    "GICS Sector": "Utilities",
+    "Security": "FirstEnergy"
+  },
+  "FFIV": {
+    "GICS Sector": "Information Technology",
+    "Security": "F5, Inc."
+  },
+  "FI": {
+    "GICS Sector": "Financials",
+    "Security": "Fiserv"
+  },
+  "FICO": {
+    "GICS Sector": "Information Technology",
+    "Security": "Fair Isaac"
+  },
+  "FIS": {
+    "GICS Sector": "Financials",
+    "Security": "Fidelity National Information Services"
+  },
+  "FITB": {
+    "GICS Sector": "Financials",
+    "Security": "Fifth Third Bancorp"
+  },
+  "FMC": {
+    "GICS Sector": "Materials",
+    "Security": "FMC Corporation"
+  },
+  "FOX": {
+    "GICS Sector": "Communication Services",
+    "Security": "Fox Corporation (Class B)"
+  },
+  "FOXA": {
+    "GICS Sector": "Communication Services",
+    "Security": "Fox Corporation (Class A)"
+  },
+  "FRT": {
+    "GICS Sector": "Real Estate",
+    "Security": "Federal Realty Investment Trust"
+  },
+  "FSLR": {
+    "GICS Sector": "Information Technology",
+    "Security": "First Solar"
+  },
+  "FTNT": {
+    "GICS Sector": "Information Technology",
+    "Security": "Fortinet"
+  },
+  "FTV": {
+    "GICS Sector": "Industrials",
+    "Security": "Fortive"
+  },
+  "GD": {
+    "GICS Sector": "Industrials",
+    "Security": "General Dynamics"
+  },
+  "GDDY": {
+    "GICS Sector": "Information Technology",
+    "Security": "GoDaddy"
+  },
+  "GE": {
+    "GICS Sector": "Industrials",
+    "Security": "GE Aerospace"
+  },
+  "GEHC": {
+    "GICS Sector": "Health Care",
+    "Security": "GE HealthCare"
+  },
+  "GEN": {
+    "GICS Sector": "Information Technology",
+    "Security": "Gen Digital"
+  },
+  "GEV": {
+    "GICS Sector": "Industrials",
+    "Security": "GE Vernova"
+  },
+  "GILD": {
+    "GICS Sector": "Health Care",
+    "Security": "Gilead Sciences"
+  },
+  "GIS": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "General Mills"
+  },
+  "GL": {
+    "GICS Sector": "Financials",
+    "Security": "Globe Life"
+  },
+  "GLW": {
+    "GICS Sector": "Information Technology",
+    "Security": "Corning Inc."
+  },
+  "GM": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "General Motors"
+  },
+  "GNRC": {
+    "GICS Sector": "Industrials",
+    "Security": "Generac"
+  },
+  "GOOG": {
+    "GICS Sector": "Communication Services",
+    "Security": "Alphabet Inc. (Class C)"
+  },
+  "GOOGL": {
+    "GICS Sector": "Communication Services",
+    "Security": "Alphabet Inc. (Class A)"
+  },
+  "GPC": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Genuine Parts Company"
+  },
+  "GPN": {
+    "GICS Sector": "Financials",
+    "Security": "Global Payments"
+  },
+  "GRMN": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Garmin"
+  },
+  "GS": {
+    "GICS Sector": "Financials",
+    "Security": "Goldman Sachs"
+  },
+  "GWW": {
+    "GICS Sector": "Industrials",
+    "Security": "W. W. Grainger"
+  },
+  "HAL": {
+    "GICS Sector": "Energy",
+    "Security": "Halliburton"
+  },
+  "HAS": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Hasbro"
+  },
+  "HBAN": {
+    "GICS Sector": "Financials",
+    "Security": "Huntington Bancshares"
+  },
+  "HCA": {
+    "GICS Sector": "Health Care",
+    "Security": "HCA Healthcare"
+  },
+  "HD": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Home Depot (The)"
+  },
+  "HES": {
+    "GICS Sector": "Energy",
+    "Security": "Hess Corporation"
+  },
+  "HIG": {
+    "GICS Sector": "Financials",
+    "Security": "Hartford (The)"
+  },
+  "HII": {
+    "GICS Sector": "Industrials",
+    "Security": "Huntington Ingalls Industries"
+  },
+  "HLT": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Hilton Worldwide"
+  },
+  "HOLX": {
+    "GICS Sector": "Health Care",
+    "Security": "Hologic"
+  },
+  "HON": {
+    "GICS Sector": "Industrials",
+    "Security": "Honeywell"
+  },
+  "HPE": {
+    "GICS Sector": "Information Technology",
+    "Security": "Hewlett Packard Enterprise"
+  },
+  "HPQ": {
+    "GICS Sector": "Information Technology",
+    "Security": "HP Inc."
+  },
+  "HRL": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Hormel Foods"
+  },
+  "HSIC": {
+    "GICS Sector": "Health Care",
+    "Security": "Henry Schein"
+  },
+  "HST": {
+    "GICS Sector": "Real Estate",
+    "Security": "Host Hotels & Resorts"
+  },
+  "HSY": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Hershey Company (The)"
+  },
+  "HUBB": {
+    "GICS Sector": "Industrials",
+    "Security": "Hubbell Incorporated"
+  },
+  "HUM": {
+    "GICS Sector": "Health Care",
+    "Security": "Humana"
+  },
+  "HWM": {
+    "GICS Sector": "Industrials",
+    "Security": "Howmet Aerospace"
+  },
+  "IBM": {
+    "GICS Sector": "Information Technology",
+    "Security": "IBM"
+  },
+  "ICE": {
+    "GICS Sector": "Financials",
+    "Security": "Intercontinental Exchange"
+  },
+  "IDXX": {
+    "GICS Sector": "Health Care",
+    "Security": "Idexx Laboratories"
+  },
+  "IEX": {
+    "GICS Sector": "Industrials",
+    "Security": "IDEX Corporation"
+  },
+  "IFF": {
+    "GICS Sector": "Materials",
+    "Security": "International Flavors & Fragrances"
+  },
+  "INCY": {
+    "GICS Sector": "Health Care",
+    "Security": "Incyte"
+  },
+  "INTC": {
+    "GICS Sector": "Information Technology",
+    "Security": "Intel"
+  },
+  "INTU": {
+    "GICS Sector": "Information Technology",
+    "Security": "Intuit"
+  },
+  "INVH": {
+    "GICS Sector": "Real Estate",
+    "Security": "Invitation Homes"
+  },
+  "IP": {
+    "GICS Sector": "Materials",
+    "Security": "International Paper"
+  },
+  "IPG": {
+    "GICS Sector": "Communication Services",
+    "Security": "Interpublic Group of Companies (The)"
+  },
+  "IQV": {
+    "GICS Sector": "Health Care",
+    "Security": "IQVIA"
+  },
+  "IR": {
+    "GICS Sector": "Industrials",
+    "Security": "Ingersoll Rand"
+  },
+  "IRM": {
+    "GICS Sector": "Real Estate",
+    "Security": "Iron Mountain"
+  },
+  "ISRG": {
+    "GICS Sector": "Health Care",
+    "Security": "Intuitive Surgical"
+  },
+  "IT": {
+    "GICS Sector": "Information Technology",
+    "Security": "Gartner"
+  },
+  "ITW": {
+    "GICS Sector": "Industrials",
+    "Security": "Illinois Tool Works"
+  },
+  "IVZ": {
+    "GICS Sector": "Financials",
+    "Security": "Invesco"
+  },
+  "J": {
+    "GICS Sector": "Industrials",
+    "Security": "Jacobs Solutions"
+  },
+  "JBHT": {
+    "GICS Sector": "Industrials",
+    "Security": "J.B. Hunt"
+  },
+  "JBL": {
+    "GICS Sector": "Information Technology",
+    "Security": "Jabil"
+  },
+  "JCI": {
+    "GICS Sector": "Industrials",
+    "Security": "Johnson Controls"
+  },
+  "JKHY": {
+    "GICS Sector": "Financials",
+    "Security": "Jack Henry & Associates"
+  },
+  "JNJ": {
+    "GICS Sector": "Health Care",
+    "Security": "Johnson & Johnson"
+  },
+  "JNPR": {
+    "GICS Sector": "Information Technology",
+    "Security": "Juniper Networks"
+  },
+  "JPM": {
+    "GICS Sector": "Financials",
+    "Security": "JPMorgan Chase"
+  },
+  "K": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Kellanova"
+  },
+  "KDP": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Keurig Dr Pepper"
+  },
+  "KEY": {
+    "GICS Sector": "Financials",
+    "Security": "KeyCorp"
+  },
+  "KEYS": {
+    "GICS Sector": "Information Technology",
+    "Security": "Keysight Technologies"
+  },
+  "KHC": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Kraft Heinz"
+  },
+  "KIM": {
+    "GICS Sector": "Real Estate",
+    "Security": "Kimco Realty"
+  },
+  "KKR": {
+    "GICS Sector": "Financials",
+    "Security": "KKR"
+  },
+  "KLAC": {
+    "GICS Sector": "Information Technology",
+    "Security": "KLA Corporation"
+  },
+  "KMB": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Kimberly-Clark"
+  },
+  "KMI": {
+    "GICS Sector": "Energy",
+    "Security": "Kinder Morgan"
+  },
+  "KMX": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "CarMax"
+  },
+  "KO": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Coca-Cola Company (The)"
+  },
+  "KR": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Kroger"
+  },
+  "KVUE": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Kenvue"
+  },
+  "L": {
+    "GICS Sector": "Financials",
+    "Security": "Loews Corporation"
+  },
+  "LDOS": {
+    "GICS Sector": "Industrials",
+    "Security": "Leidos"
+  },
+  "LEN": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Lennar"
+  },
+  "LH": {
+    "GICS Sector": "Health Care",
+    "Security": "LabCorp"
+  },
+  "LHX": {
+    "GICS Sector": "Industrials",
+    "Security": "L3Harris"
+  },
+  "LIN": {
+    "GICS Sector": "Materials",
+    "Security": "Linde plc"
+  },
+  "LKQ": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "LKQ Corporation"
+  },
+  "LLY": {
+    "GICS Sector": "Health Care",
+    "Security": "Lilly (Eli)"
+  },
+  "LMT": {
+    "GICS Sector": "Industrials",
+    "Security": "Lockheed Martin"
+  },
+  "LNT": {
+    "GICS Sector": "Utilities",
+    "Security": "Alliant Energy"
+  },
+  "LOW": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Lowe's"
+  },
+  "LRCX": {
+    "GICS Sector": "Information Technology",
+    "Security": "Lam Research"
+  },
+  "LULU": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Lululemon Athletica"
+  },
+  "LUV": {
+    "GICS Sector": "Industrials",
+    "Security": "Southwest Airlines"
+  },
+  "LVS": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Las Vegas Sands"
+  },
+  "LW": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Lamb Weston"
+  },
+  "LYB": {
+    "GICS Sector": "Materials",
+    "Security": "LyondellBasell"
+  },
+  "LYV": {
+    "GICS Sector": "Communication Services",
+    "Security": "Live Nation Entertainment"
+  },
+  "MA": {
+    "GICS Sector": "Financials",
+    "Security": "Mastercard"
+  },
+  "MAA": {
+    "GICS Sector": "Real Estate",
+    "Security": "Mid-America Apartment Communities"
+  },
+  "MAR": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Marriott International"
+  },
+  "MAS": {
+    "GICS Sector": "Industrials",
+    "Security": "Masco"
+  },
+  "MCD": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "McDonald's"
+  },
+  "MCHP": {
+    "GICS Sector": "Information Technology",
+    "Security": "Microchip Technology"
+  },
+  "MCK": {
+    "GICS Sector": "Health Care",
+    "Security": "McKesson Corporation"
+  },
+  "MCO": {
+    "GICS Sector": "Financials",
+    "Security": "Moody's Corporation"
+  },
+  "MDLZ": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Mondelez International"
+  },
+  "MDT": {
+    "GICS Sector": "Health Care",
+    "Security": "Medtronic"
+  },
+  "MET": {
+    "GICS Sector": "Financials",
+    "Security": "MetLife"
+  },
+  "META": {
+    "GICS Sector": "Communication Services",
+    "Security": "Meta Platforms"
+  },
+  "MGM": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "MGM Resorts"
+  },
+  "MHK": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Mohawk Industries"
+  },
+  "MKC": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "McCormick & Company"
+  },
+  "MKTX": {
+    "GICS Sector": "Financials",
+    "Security": "MarketAxess"
+  },
+  "MLM": {
+    "GICS Sector": "Materials",
+    "Security": "Martin Marietta Materials"
+  },
+  "MMC": {
+    "GICS Sector": "Financials",
+    "Security": "Marsh McLennan"
+  },
+  "MMM": {
+    "GICS Sector": "Industrials",
+    "Security": "3M"
+  },
+  "MNST": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Monster Beverage"
+  },
+  "MO": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Altria"
+  },
+  "MOH": {
+    "GICS Sector": "Health Care",
+    "Security": "Molina Healthcare"
+  },
+  "MOS": {
+    "GICS Sector": "Materials",
+    "Security": "Mosaic Company (The)"
+  },
+  "MPC": {
+    "GICS Sector": "Energy",
+    "Security": "Marathon Petroleum"
+  },
+  "MPWR": {
+    "GICS Sector": "Information Technology",
+    "Security": "Monolithic Power Systems"
+  },
+  "MRK": {
+    "GICS Sector": "Health Care",
+    "Security": "Merck & Co."
+  },
+  "MRNA": {
+    "GICS Sector": "Health Care",
+    "Security": "Moderna"
+  },
+  "MRO": {
+    "GICS Sector": "Energy",
+    "Security": "Marathon Oil"
+  },
+  "MS": {
+    "GICS Sector": "Financials",
+    "Security": "Morgan Stanley"
+  },
+  "MSCI": {
+    "GICS Sector": "Financials",
+    "Security": "MSCI"
+  },
+  "MSFT": {
+    "GICS Sector": "Information Technology",
+    "Security": "Microsoft"
+  },
+  "MSI": {
+    "GICS Sector": "Information Technology",
+    "Security": "Motorola Solutions"
+  },
+  "MTB": {
+    "GICS Sector": "Financials",
+    "Security": "M&T Bank"
+  },
+  "MTCH": {
+    "GICS Sector": "Communication Services",
+    "Security": "Match Group"
+  },
+  "MTD": {
+    "GICS Sector": "Health Care",
+    "Security": "Mettler Toledo"
+  },
+  "MU": {
+    "GICS Sector": "Information Technology",
+    "Security": "Micron Technology"
+  },
+  "NCLH": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Norwegian Cruise Line Holdings"
+  },
+  "NDAQ": {
+    "GICS Sector": "Financials",
+    "Security": "Nasdaq, Inc."
+  },
+  "NDSN": {
+    "GICS Sector": "Industrials",
+    "Security": "Nordson Corporation"
+  },
+  "NEE": {
+    "GICS Sector": "Utilities",
+    "Security": "NextEra Energy"
+  },
+  "NEM": {
+    "GICS Sector": "Materials",
+    "Security": "Newmont"
+  },
+  "NFLX": {
+    "GICS Sector": "Communication Services",
+    "Security": "Netflix"
+  },
+  "NI": {
+    "GICS Sector": "Utilities",
+    "Security": "NiSource"
+  },
+  "NKE": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Nike, Inc."
+  },
+  "NOC": {
+    "GICS Sector": "Industrials",
+    "Security": "Northrop Grumman"
+  },
+  "NOW": {
+    "GICS Sector": "Information Technology",
+    "Security": "ServiceNow"
+  },
+  "NRG": {
+    "GICS Sector": "Utilities",
+    "Security": "NRG Energy"
+  },
+  "NSC": {
+    "GICS Sector": "Industrials",
+    "Security": "Norfolk Southern Railway"
+  },
+  "NTAP": {
+    "GICS Sector": "Information Technology",
+    "Security": "NetApp"
+  },
+  "NTRS": {
+    "GICS Sector": "Financials",
+    "Security": "Northern Trust"
+  },
+  "NUE": {
+    "GICS Sector": "Materials",
+    "Security": "Nucor"
+  },
+  "NVDA": {
+    "GICS Sector": "Information Technology",
+    "Security": "Nvidia"
+  },
+  "NVR": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "NVR, Inc."
+  },
+  "NWS": {
+    "GICS Sector": "Communication Services",
+    "Security": "News Corp (Class B)"
+  },
+  "NWSA": {
+    "GICS Sector": "Communication Services",
+    "Security": "News Corp (Class A)"
+  },
+  "NXPI": {
+    "GICS Sector": "Information Technology",
+    "Security": "NXP Semiconductors"
+  },
+  "O": {
+    "GICS Sector": "Real Estate",
+    "Security": "Realty Income"
+  },
+  "ODFL": {
+    "GICS Sector": "Industrials",
+    "Security": "Old Dominion"
+  },
+  "OKE": {
+    "GICS Sector": "Energy",
+    "Security": "ONEOK"
+  },
+  "OMC": {
+    "GICS Sector": "Communication Services",
+    "Security": "Omnicom Group"
+  },
+  "ON": {
+    "GICS Sector": "Information Technology",
+    "Security": "ON Semiconductor"
+  },
+  "ORCL": {
+    "GICS Sector": "Information Technology",
+    "Security": "Oracle Corporation"
+  },
+  "ORLY": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "O'Reilly Auto Parts"
+  },
+  "OTIS": {
+    "GICS Sector": "Industrials",
+    "Security": "Otis Worldwide"
+  },
+  "OXY": {
+    "GICS Sector": "Energy",
+    "Security": "Occidental Petroleum"
+  },
+  "PANW": {
+    "GICS Sector": "Information Technology",
+    "Security": "Palo Alto Networks"
+  },
+  "PARA": {
+    "GICS Sector": "Communication Services",
+    "Security": "Paramount Global"
+  },
+  "PAYC": {
+    "GICS Sector": "Industrials",
+    "Security": "Paycom"
+  },
+  "PAYX": {
+    "GICS Sector": "Industrials",
+    "Security": "Paychex"
+  },
+  "PCAR": {
+    "GICS Sector": "Industrials",
+    "Security": "Paccar"
+  },
+  "PCG": {
+    "GICS Sector": "Utilities",
+    "Security": "PG&E Corporation"
+  },
+  "PEG": {
+    "GICS Sector": "Utilities",
+    "Security": "Public Service Enterprise Group"
+  },
+  "PEP": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "PepsiCo"
+  },
+  "PFE": {
+    "GICS Sector": "Health Care",
+    "Security": "Pfizer"
+  },
+  "PFG": {
+    "GICS Sector": "Financials",
+    "Security": "Principal Financial Group"
+  },
+  "PG": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Procter & Gamble"
+  },
+  "PGR": {
+    "GICS Sector": "Financials",
+    "Security": "Progressive Corporation"
+  },
+  "PH": {
+    "GICS Sector": "Industrials",
+    "Security": "Parker Hannifin"
+  },
+  "PHM": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "PulteGroup"
+  },
+  "PKG": {
+    "GICS Sector": "Materials",
+    "Security": "Packaging Corporation of America"
+  },
+  "PLD": {
+    "GICS Sector": "Real Estate",
+    "Security": "Prologis"
+  },
+  "PLTR": {
+    "GICS Sector": "Information Technology",
+    "Security": "Palantir Technologies"
+  },
+  "PM": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Philip Morris International"
+  },
+  "PNC": {
+    "GICS Sector": "Financials",
+    "Security": "PNC Financial Services"
+  },
+  "PNR": {
+    "GICS Sector": "Industrials",
+    "Security": "Pentair"
+  },
+  "PNW": {
+    "GICS Sector": "Utilities",
+    "Security": "Pinnacle West"
+  },
+  "PODD": {
+    "GICS Sector": "Health Care",
+    "Security": "Insulet Corporation"
+  },
+  "POOL": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Pool Corporation"
+  },
+  "PPG": {
+    "GICS Sector": "Materials",
+    "Security": "PPG Industries"
+  },
+  "PPL": {
+    "GICS Sector": "Utilities",
+    "Security": "PPL Corporation"
+  },
+  "PRU": {
+    "GICS Sector": "Financials",
+    "Security": "Prudential Financial"
+  },
+  "PSA": {
+    "GICS Sector": "Real Estate",
+    "Security": "Public Storage"
+  },
+  "PSX": {
+    "GICS Sector": "Energy",
+    "Security": "Phillips 66"
+  },
+  "PTC": {
+    "GICS Sector": "Information Technology",
+    "Security": "PTC Inc."
+  },
+  "PWR": {
+    "GICS Sector": "Industrials",
+    "Security": "Quanta Services"
+  },
+  "PYPL": {
+    "GICS Sector": "Financials",
+    "Security": "PayPal"
+  },
+  "QCOM": {
+    "GICS Sector": "Information Technology",
+    "Security": "Qualcomm"
+  },
+  "QRVO": {
+    "GICS Sector": "Information Technology",
+    "Security": "Qorvo"
+  },
+  "RCL": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Royal Caribbean Group"
+  },
+  "REG": {
+    "GICS Sector": "Real Estate",
+    "Security": "Regency Centers"
+  },
+  "REGN": {
+    "GICS Sector": "Health Care",
+    "Security": "Regeneron Pharmaceuticals"
+  },
+  "RF": {
+    "GICS Sector": "Financials",
+    "Security": "Regions Financial Corporation"
+  },
+  "RJF": {
+    "GICS Sector": "Financials",
+    "Security": "Raymond James Financial"
+  },
+  "RL": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Ralph Lauren Corporation"
+  },
+  "RMD": {
+    "GICS Sector": "Health Care",
+    "Security": "ResMed"
+  },
+  "ROK": {
+    "GICS Sector": "Industrials",
+    "Security": "Rockwell Automation"
+  },
+  "ROL": {
+    "GICS Sector": "Industrials",
+    "Security": "Rollins, Inc."
+  },
+  "ROP": {
+    "GICS Sector": "Information Technology",
+    "Security": "Roper Technologies"
+  },
+  "ROST": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Ross Stores"
+  },
+  "RSG": {
+    "GICS Sector": "Industrials",
+    "Security": "Republic Services"
+  },
+  "RTX": {
+    "GICS Sector": "Industrials",
+    "Security": "RTX Corporation"
+  },
+  "RVTY": {
+    "GICS Sector": "Health Care",
+    "Security": "Revvity"
+  },
+  "SBAC": {
+    "GICS Sector": "Real Estate",
+    "Security": "SBA Communications"
+  },
+  "SBUX": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Starbucks"
+  },
+  "SCHW": {
+    "GICS Sector": "Financials",
+    "Security": "Charles Schwab Corporation"
+  },
+  "SHW": {
+    "GICS Sector": "Materials",
+    "Security": "Sherwin-Williams"
+  },
+  "SJM": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "J.M. Smucker Company (The)"
+  },
+  "SLB": {
+    "GICS Sector": "Energy",
+    "Security": "Schlumberger"
+  },
+  "SMCI": {
+    "GICS Sector": "Information Technology",
+    "Security": "Supermicro"
+  },
+  "SNA": {
+    "GICS Sector": "Industrials",
+    "Security": "Snap-on"
+  },
+  "SNPS": {
+    "GICS Sector": "Information Technology",
+    "Security": "Synopsys"
+  },
+  "SO": {
+    "GICS Sector": "Utilities",
+    "Security": "Southern Company"
+  },
+  "SOLV": {
+    "GICS Sector": "Health Care",
+    "Security": "Solventum"
+  },
+  "SPG": {
+    "GICS Sector": "Real Estate",
+    "Security": "Simon Property Group"
+  },
+  "SPGI": {
+    "GICS Sector": "Financials",
+    "Security": "S&P Global"
+  },
+  "SRE": {
+    "GICS Sector": "Utilities",
+    "Security": "Sempra"
+  },
+  "STE": {
+    "GICS Sector": "Health Care",
+    "Security": "Steris"
+  },
+  "STLD": {
+    "GICS Sector": "Materials",
+    "Security": "Steel Dynamics"
+  },
+  "STT": {
+    "GICS Sector": "Financials",
+    "Security": "State Street Corporation"
+  },
+  "STX": {
+    "GICS Sector": "Information Technology",
+    "Security": "Seagate Technology"
+  },
+  "STZ": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Constellation Brands"
+  },
+  "SW": {
+    "GICS Sector": "Materials",
+    "Security": "Smurfit WestRock"
+  },
+  "SWK": {
+    "GICS Sector": "Industrials",
+    "Security": "Stanley Black & Decker"
+  },
+  "SWKS": {
+    "GICS Sector": "Information Technology",
+    "Security": "Skyworks Solutions"
+  },
+  "SYF": {
+    "GICS Sector": "Financials",
+    "Security": "Synchrony Financial"
+  },
+  "SYK": {
+    "GICS Sector": "Health Care",
+    "Security": "Stryker Corporation"
+  },
+  "SYY": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Sysco"
+  },
+  "T": {
+    "GICS Sector": "Communication Services",
+    "Security": "AT&T"
+  },
+  "TAP": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Molson Coors Beverage Company"
+  },
+  "TDG": {
+    "GICS Sector": "Industrials",
+    "Security": "TransDigm Group"
+  },
+  "TDY": {
+    "GICS Sector": "Information Technology",
+    "Security": "Teledyne Technologies"
+  },
+  "TECH": {
+    "GICS Sector": "Health Care",
+    "Security": "Bio-Techne"
+  },
+  "TEL": {
+    "GICS Sector": "Information Technology",
+    "Security": "TE Connectivity"
+  },
+  "TER": {
+    "GICS Sector": "Information Technology",
+    "Security": "Teradyne"
+  },
+  "TFC": {
+    "GICS Sector": "Financials",
+    "Security": "Truist Financial"
+  },
+  "TFX": {
+    "GICS Sector": "Health Care",
+    "Security": "Teleflex"
+  },
+  "TGT": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Target Corporation"
+  },
+  "TJX": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "TJX Companies"
+  },
+  "TMO": {
+    "GICS Sector": "Health Care",
+    "Security": "Thermo Fisher Scientific"
+  },
+  "TMUS": {
+    "GICS Sector": "Communication Services",
+    "Security": "T-Mobile US"
+  },
+  "TPR": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Tapestry, Inc."
+  },
+  "TRGP": {
+    "GICS Sector": "Energy",
+    "Security": "Targa Resources"
+  },
+  "TRMB": {
+    "GICS Sector": "Information Technology",
+    "Security": "Trimble Inc."
+  },
+  "TROW": {
+    "GICS Sector": "Financials",
+    "Security": "T. Rowe Price"
+  },
+  "TRV": {
+    "GICS Sector": "Financials",
+    "Security": "Travelers Companies (The)"
+  },
+  "TSCO": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Tractor Supply"
+  },
+  "TSLA": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Tesla, Inc."
+  },
+  "TSN": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Tyson Foods"
+  },
+  "TT": {
+    "GICS Sector": "Industrials",
+    "Security": "Trane Technologies"
+  },
+  "TTWO": {
+    "GICS Sector": "Communication Services",
+    "Security": "Take-Two Interactive"
+  },
+  "TXN": {
+    "GICS Sector": "Information Technology",
+    "Security": "Texas Instruments"
+  },
+  "TXT": {
+    "GICS Sector": "Industrials",
+    "Security": "Textron"
+  },
+  "TYL": {
+    "GICS Sector": "Information Technology",
+    "Security": "Tyler Technologies"
+  },
+  "UAL": {
+    "GICS Sector": "Industrials",
+    "Security": "United Airlines Holdings"
+  },
+  "UBER": {
+    "GICS Sector": "Industrials",
+    "Security": "Uber"
+  },
+  "UDR": {
+    "GICS Sector": "Real Estate",
+    "Security": "UDR, Inc."
+  },
+  "UHS": {
+    "GICS Sector": "Health Care",
+    "Security": "Universal Health Services"
+  },
+  "ULTA": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Ulta Beauty"
+  },
+  "UNH": {
+    "GICS Sector": "Health Care",
+    "Security": "UnitedHealth Group"
+  },
+  "UNP": {
+    "GICS Sector": "Industrials",
+    "Security": "Union Pacific Corporation"
+  },
+  "UPS": {
+    "GICS Sector": "Industrials",
+    "Security": "United Parcel Service"
+  },
+  "URI": {
+    "GICS Sector": "Industrials",
+    "Security": "United Rentals"
+  },
+  "USB": {
+    "GICS Sector": "Financials",
+    "Security": "U.S. Bancorp"
+  },
+  "V": {
+    "GICS Sector": "Financials",
+    "Security": "Visa Inc."
+  },
+  "VICI": {
+    "GICS Sector": "Real Estate",
+    "Security": "Vici Properties"
+  },
+  "VLO": {
+    "GICS Sector": "Energy",
+    "Security": "Valero Energy"
+  },
+  "VLTO": {
+    "GICS Sector": "Industrials",
+    "Security": "Veralto"
+  },
+  "VMC": {
+    "GICS Sector": "Materials",
+    "Security": "Vulcan Materials Company"
+  },
+  "VRSK": {
+    "GICS Sector": "Industrials",
+    "Security": "Verisk Analytics"
+  },
+  "VRSN": {
+    "GICS Sector": "Information Technology",
+    "Security": "Verisign"
+  },
+  "VRTX": {
+    "GICS Sector": "Health Care",
+    "Security": "Vertex Pharmaceuticals"
+  },
+  "VST": {
+    "GICS Sector": "Utilities",
+    "Security": "Vistra Corp."
+  },
+  "VTR": {
+    "GICS Sector": "Real Estate",
+    "Security": "Ventas"
+  },
+  "VTRS": {
+    "GICS Sector": "Health Care",
+    "Security": "Viatris"
+  },
+  "VZ": {
+    "GICS Sector": "Communication Services",
+    "Security": "Verizon"
+  },
+  "WAB": {
+    "GICS Sector": "Industrials",
+    "Security": "Wabtec"
+  },
+  "WAT": {
+    "GICS Sector": "Health Care",
+    "Security": "Waters Corporation"
+  },
+  "WBA": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Walgreens Boots Alliance"
+  },
+  "WBD": {
+    "GICS Sector": "Communication Services",
+    "Security": "Warner Bros. Discovery"
+  },
+  "WDC": {
+    "GICS Sector": "Information Technology",
+    "Security": "Western Digital"
+  },
+  "WEC": {
+    "GICS Sector": "Utilities",
+    "Security": "WEC Energy Group"
+  },
+  "WELL": {
+    "GICS Sector": "Real Estate",
+    "Security": "Welltower"
+  },
+  "WFC": {
+    "GICS Sector": "Financials",
+    "Security": "Wells Fargo"
+  },
+  "WM": {
+    "GICS Sector": "Industrials",
+    "Security": "Waste Management"
+  },
+  "WMB": {
+    "GICS Sector": "Energy",
+    "Security": "Williams Companies"
+  },
+  "WMT": {
+    "GICS Sector": "Consumer Staples",
+    "Security": "Walmart"
+  },
+  "WRB": {
+    "GICS Sector": "Financials",
+    "Security": "W. R. Berkley Corporation"
+  },
+  "WST": {
+    "GICS Sector": "Health Care",
+    "Security": "West Pharmaceutical Services"
+  },
+  "WTW": {
+    "GICS Sector": "Financials",
+    "Security": "Willis Towers Watson"
+  },
+  "WY": {
+    "GICS Sector": "Real Estate",
+    "Security": "Weyerhaeuser"
+  },
+  "WYNN": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Wynn Resorts"
+  },
+  "XEL": {
+    "GICS Sector": "Utilities",
+    "Security": "Xcel Energy"
+  },
+  "XOM": {
+    "GICS Sector": "Energy",
+    "Security": "ExxonMobil"
+  },
+  "XYL": {
+    "GICS Sector": "Industrials",
+    "Security": "Xylem Inc."
+  },
+  "YUM": {
+    "GICS Sector": "Consumer Discretionary",
+    "Security": "Yum! Brands"
+  },
+  "ZBH": {
+    "GICS Sector": "Health Care",
+    "Security": "Zimmer Biomet"
+  },
+  "ZBRA": {
+    "GICS Sector": "Information Technology",
+    "Security": "Zebra Technologies"
+  },
+  "ZTS": {
+    "GICS Sector": "Health Care",
+    "Security": "Zoetis"
+  }
+}

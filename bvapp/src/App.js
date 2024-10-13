@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import { BounceLoader } from 'react-spinners'; // Import the spinner
+import sp500Json from './sp500_tickers.json';
 
-const industries = {
-  "Information Technology": ["IBM", "Intel", "Microsoft", "Nvidia", "ServiceNow"],
-  "Health Care": ["AbbVie", "Cigna", "IQVIA", "Eli Lilly", "Pfizer"],
-  "Finance": ["JP Morgan Chase", "PayPal", "Visa Inc", "Goldman Sachs", "American Express"],
-};
+const industries = [...new Set(Object.entries(sp500Json).map(([ticker, info]) => info["GICS Sector"]))];
+console.log(industries)
 
 const timePeriods = [
   "1 day", "5 days", "1 month", "3 months", "6 months", "1 year", "2 years", "5 years", "10 years", "Year to date", "All time"
@@ -81,9 +79,9 @@ function App() {
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
           <label style={styles.label}>Industry:</label>
-          <select value={industry} onChange={(e) => setIndustry(e.target.value)} style={styles.select}>
+          <select value={industry} onChange={(e) => { setIndustry(e.target.value); setCompany('')}} style={styles.select}>
             <option value="">Select Industry</option>
-            {Object.keys(industries).map((ind) => (
+            {industries.map((ind) => (
               <option key={ind} value={ind}>{ind}</option>
             ))}
           </select>
@@ -92,9 +90,9 @@ function App() {
           <label style={styles.label}>Company:</label>
           <select value={company} onChange={(e) => setCompany(e.target.value)} disabled={!industry} style={styles.select}>
             <option value="">Select Company</option>
-            {industry && industries[industry].map((comp) => (
-              <option key={comp} value={comp}>{comp}</option>
-            ))}
+            {Object.entries(sp500Json)
+      .filter(([ticker, data]) => data['GICS Sector'] === industry) // Filter by industry
+      .map(([ticker, data]) => <option key={ticker} value={ticker}>{data['Security']}</option>)}
           </select>
         </div>
         <div style={styles.formGroup}>

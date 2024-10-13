@@ -5,34 +5,16 @@ import requests
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import json
 
 
 app = Flask(__name__)
 
 
-company_dict = {
-    "Information Technology": {
-        "IBM": "IBM",
-        "Intel": "INTC",
-        "Microsoft": "MSFT",
-        "Nvidia": "NVDA",
-        "ServiceNow": "NOW",
-    },
-    "Health Care": {
-        "AbbVie": "ABBV",
-        "Cigna": "CI",
-        "IQVIA": "IQV",
-        "Eli Lilly": "LLY",
-        "Pfizer": "PFE",
-    },
-    "Finance": {
-        "JP Morgan Chase": "JPM",
-        "PayPal": "PYPL",
-        "Visa Inc": "V",
-        "Goldman Sachs": "GS",
-        "American Express": "AXP",
-    },
-}
+# Load the JSON data from the file
+with open('sp500_tickers.json', 'r') as file:
+    sp500Json = json.load(file)
+
 
 valid_time_periods = {
     "1 day": "1d",
@@ -49,30 +31,42 @@ valid_time_periods = {
 }
 
 
+@app.route("/api/sp500_tickers", methods=["GET"])
+def get_sp500_tickers():
+    # Fetch S&P 500 constituents from Wikipedia
+    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    tables = pd.read_html(url)
+    df = tables[0]  # The first table contains the S&P 500 data
+    df = df[['Symbol', 'GICS Sector', 'Security']]  # Select relevant columns
+    tickers_data = df.set_index('Symbol')[['GICS Sector', 'Security']].to_dict(orient='index')  # Create a dictionary of tickers, sectors, and company names
+    return jsonify(tickers_data)
+
+
 @app.route("/api/stock-data", methods=["POST"])
 def get_stock_data():
     data = request.json
-    industry = data.get('industry')
-    company = data.get('company')
+    ticker = data.get('company')
+
+    company_name = sp500Json[ticker]['Security']
+
     time_period = valid_time_periods[data.get('time_period')]
-    ticker_symbol = company_dict[industry][company]
     
     # Fetch stock data
-    stock_data = yf.Ticker(ticker_symbol).history(period=time_period)
+    stock_data = yf.Ticker(ticker).history(period=time_period)
 
     # Generate plots
-    plotJSON = generate_timeseries_plot(stock_data, company)
+    plotJSON = generate_timeseries_plot(stock_data, company_name)
 
     # Get company basic info
-    info = get_company_basic_info(ticker_symbol)
+    info = get_company_basic_info(ticker)
 
     # Get company summary metrics
-    summary_data = get_company_summary(ticker_symbol, company, time_period)
+    summary_data = get_company_summary(ticker, company_name, time_period)
 
     return jsonify({
-        'company': company,
+        'company': company_name,
         'info': info,
-        'ticker_symbol': ticker_symbol,
+        'ticker_symbol': ticker,
         'plot': plotJSON,  # Return the HTML content
         'summary_data': summary_data
     })

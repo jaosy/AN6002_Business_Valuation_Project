@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 import { BounceLoader } from 'react-spinners'; // Import the spinner
 import sp500Json from './sp500_tickers.json';
+import GeoChart from './map.js';
 
 const industries = [...new Set(Object.entries(sp500Json).map(([ticker, info]) => info["GICS Sector"]))];
-console.log(industries)
 
 const timePeriods = [
   "1 day", "5 days", "1 month", "3 months", "6 months", "1 year", "2 years", "5 years", "10 years", "Year to date", "All time"
@@ -49,7 +49,6 @@ function App() {
     }
 
     try {
-      console.log(company)
       const response = await fetch('/api/stock-valuation', {
         method: 'POST',
         headers: {
@@ -91,8 +90,8 @@ function App() {
           <select value={company} onChange={(e) => setCompany(e.target.value)} disabled={!industry} style={styles.select}>
             <option value="">Select Company</option>
             {Object.entries(sp500Json)
-      .filter(([ticker, data]) => data['GICS Sector'] === industry) // Filter by industry
-      .map(([ticker, data]) => <option key={ticker} value={ticker}>{data['Security']}</option>)}
+              .filter(([ticker, data]) => data['GICS Sector'] === industry) // Filter by industry
+              .map(([ticker, data]) => <option key={ticker} value={ticker}>{data['Security']}</option>)}
           </select>
         </div>
         <div style={styles.formGroup}>
@@ -112,7 +111,7 @@ function App() {
           style={timePeriod === '' || industry === '' || company === '' ? styles.buttonDisabled : styles.button}
         >
           Get Data
-          </button>
+        </button>
       </form>
 
       {loading && (
@@ -121,37 +120,49 @@ function App() {
         </div>
       )}
 
-      
       {stockData && (
         <div style={styles.resultContainer}>
           <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
           <div style={styles.plotContainer}>
             <Plot data={stockDataPlot.data} layout={stockDataPlot.layout} />
           </div>
-          <ul style={styles.list}>
-            {Object.entries(stockData.summary_data).map(([key, value]) => (
-              <li key={key} style={styles.listItem}>{key}: {value}</li>
-            ))}
-          </ul>
-          <ul style={styles.list}>
-            {Object.entries(stockData.info).map(([key, value]) => (
-              <li key={key} style={styles.listItem}>{key}: {value}</li>
-            ))}
-          </ul>
+          <div style={styles.infoContainer}>
+            <h3 style={styles.infoHeader}>Summary Data</h3>
+            <ul style={styles.list}>
+              {Object.entries(stockData.summary_data).map(([key, value]) => (
+                <li key={key} style={styles.listItem}>{key}: {value}</li>
+              ))}
+            </ul>
+          </div>
+          <div style={styles.infoContainer}>
+            <h3 style={styles.infoHeader}>Company Info</h3>
+            <ul style={styles.list}>
+              <li style={styles.listItem}>Address: {stockData.info['Address']}</li>
+              <li style={styles.listItem}></li>
+              <li styles={styles.listItem}>{stockData.info['Address']}</li>
+              {Object.entries(stockData.info).map(([key, value]) => (
+                <li key={key} style={styles.listItem}>{key}: {value}</li>
+              ))}
+            </ul>
+            <GeoChart state={stockData.info['Address'].split(',')[2].trim().split(' ').slice(-2, -1)[0]} />
+          </div>
         </div>
       )}
 
       {stockValuation && (
         <div style={styles.resultContainer}>
           <h2 style={styles.resultHeader}>Results for {stockValuation.Ticker}</h2>
-          <ul style={styles.list}>
-            <li>Company Name: {stockValuation['Company Name']}</li>
-            <li>Sector: {stockValuation.Sector}</li>
-            <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
-            <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
-            <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
-            <li>Intrinsic Value per Share: {stockValuation['Intrinsic Value per Share']}</li>
-          </ul>
+          <div style={styles.infoContainer}>
+            <h3 style={styles.infoHeader}>Valuation Details</h3>
+            <ul style={styles.list}>
+              <li>Company Name: {stockValuation['Company Name']}</li>
+              <li>Sector: {stockValuation.Sector}</li>
+              <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
+              <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
+              <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
+              <li>Intrinsic Value per Share: {stockValuation['Intrinsic Value per Share']}</li>
+            </ul>
+          </div>
         </div>
       )}
     </div>
@@ -161,13 +172,13 @@ function App() {
 const styles = {
   app: {
     fontFamily: 'Arial, sans-serif',
-    maxWidth: '800px', // Increased width for better layout
+    maxWidth: '800px',
     margin: '0 auto',
     padding: '20px',
     textAlign: 'center',
-    backgroundColor: '#f9f9f9', // Light background for better contrast
-    borderRadius: '8px', // Rounded corners
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', // Subtle shadow
+    backgroundColor: '#f9f9f9',
+    borderRadius: '8px',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
   },
   header: {
     color: '#333',
@@ -189,24 +200,24 @@ const styles = {
   },
   select: {
     width: '100%',
-    padding: '10px', // Increased padding for better touch targets
+    padding: '10px',
     borderRadius: '4px',
     border: '1px solid #ccc',
-    fontSize: '16px', // Larger font for better readability
+    fontSize: '16px',
   },
   button: {
-    margin:'0.5em',
+    margin: '0.5em',
     padding: '10px 20px',
     borderRadius: '4px',
     border: 'none',
-    backgroundColor: '#007bff', // Bootstrap primary color
+    backgroundColor: '#007bff',
     color: '#fff',
     fontSize: '16px',
     cursor: 'pointer',
     transition: 'background-color 0.3s',
   },
   buttonDisabled: {
-    margin:'0.5em',
+    margin: '0.5em',
     padding: '10px 20px',
     borderRadius: '4px',
     border: 'none',
@@ -221,9 +232,9 @@ const styles = {
     marginTop: '20px',
     textAlign: 'left',
     padding: '20px',
-    backgroundColor: '#fff', // White background for results
+    backgroundColor: '#fff',
     borderRadius: '8px',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Subtle shadow for results
+    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
   },
   resultHeader: {
     marginBottom: '10px',
@@ -232,13 +243,21 @@ const styles = {
   },
   plotContainer: {
     display: 'flex',
-    justifyContent: 'center', // Center the plot
+    justifyContent: 'center',
     marginBottom: '15px',
   },
-  image: {
-    maxWidth: '100%', // Ensure the image is responsive
-    height: 'auto',
-    borderRadius: '4px', // Rounded corners for the image
+  infoContainer: {
+    marginTop: '15px',
+    padding: '15px',
+    borderRadius: '8px',
+    backgroundColor: '#f0f8ff', // Light blue background for info sections
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  },
+  infoHeader: {
+    marginBottom: '10px',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#007bff', // Bootstrap primary color
   },
   list: {
     listStyleType: 'none',
@@ -248,18 +267,18 @@ const styles = {
     marginBottom: '8px',
     fontSize: '16px',
   },
-loader: {
+  loader: {
     display: 'flex',
-    justifyContent: 'center', // Center horizontally
-    alignItems: 'center', // Center vertically
-    height: '100vh', // Full height of the viewport
-    position: 'absolute', // Position it absolutely
-    top: 0, // Align to the top
-    left: 0, // Align to the left
-    right: 0, // Align to the right
-    bottom: 0, // Align to the bottom
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Optional: semi-transparent background
-    zIndex: 1000, // Ensure it appears above other content
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    zIndex: 1000,
   },
 };
 

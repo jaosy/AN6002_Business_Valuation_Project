@@ -354,9 +354,10 @@ def stock_valuation():
         "Ticker": ticker,
         "Company Name": company,
         "Sector": sector,
-        "Enterprise Value (Millions)": enterprise_value_millions,
-        "Net Debt (Millions)": net_debt_millions,
-        "Equity Value (Millions)": equity_value_millions,
+        "Enterprise Value (Millions)": f"$ {enterprise_value_millions:.2f} mil",
+        "Net Debt (Millions)": f"$ {net_debt_millions:.2f} mil",
+        "Equity Value (Millions)": f" $ {equity_value_millions:.2f} mil",
+        "Intrinsic Value per Share": f" $ {intrinsic_value_per_share:.2f}",
     }
 
     return jsonify(data)

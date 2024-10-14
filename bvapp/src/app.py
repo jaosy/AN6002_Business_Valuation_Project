@@ -1,4 +1,8 @@
+from sklearn.preprocessing import MinMaxScaler
 from flask import Flask, jsonify, request
+from keras.models import load_model
+from pmdarima import auto_arima
+import statsmodels.api as sm
 import plotly.graph_objects as go
 import plotly as plotly
 import requests
@@ -14,6 +18,10 @@ app = Flask(__name__)
 # Load the JSON data from the file
 with open('sp500_tickers.json', 'r') as file:
     sp500Json = json.load(file)
+
+
+# Load the stock price prediction model
+model = load_model('combined_sp500_lstm_model.h5')
 
 
 valid_time_periods = {
@@ -49,6 +57,12 @@ def get_stock_data():
 
     company_name = sp500Json[ticker]['Security']
 
+    if model:
+        ticker_to_predict = 'AAPL'
+        predicted_price = predict_stock_price_combined_model(ticker_to_predict, model)
+        if predicted_price:
+            print(f"Predicted stock price for {ticker_to_predict}: {predicted_price}")
+
     time_period = valid_time_periods[data.get('time_period')]
     
     # Fetch stock data
@@ -71,6 +85,42 @@ def get_stock_data():
         'summary_data': summary_data
     })
 
+
+@app.route("/api/arima-forecast", methods=["POST"])
+def forecast_stock():
+    data = request.json
+    ticker = data.get('company')
+
+    print(f"\nFetching data for {ticker}...\n")
+    stock_data = yf.download(ticker, start="2015-01-01", end="2024-01-01")
+
+    # Augmented Dickey-Fuller test to check if time series is statonary
+    result = sm.tsa.adfuller(stock_data['Close'])
+    print(f'ADF Statistic: {result[0]}')
+    print(f'p-value: {result[1]}')
+
+    stock_diff = stock_data['Close'].diff().dropna()
+    arima_model = auto_arima(stock_diff, seasonal=False, trace=True, stepwise=True)
+
+    # Forecast 30 business days
+    n_periods = 30
+    forecast, conf_int = arima_model.predict(n_periods=n_periods, return_conf_int=True)
+    forecast_dates = pd.date_range(stock_data.index[-1], periods=n_periods, freq='B')
+
+    print(forecast.cumsum() + stock_data['Close'].iloc[-1])
+
+    
+
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(stock_data.index, stock_data['Close'], label=f'{ticker} Stock Price')
+    # plt.plot(forecast_dates, forecast.cumsum() + stock_data['Close'].iloc[-1], label='Forecast', color='red')
+    # plt.fill_between(forecast_dates, 
+    #                 conf_int[:, 0].cumsum() + stock_data['Close'].iloc[-1], 
+    #                 conf_int[:, 1].cumsum() + stock_data['Close'].iloc[-1], 
+    #                 color='red', alpha=0.3)
+    # plt.title(f'{ticker} Stock Price Forecast')
+    # plt.legend()
+    # plt.show()
 
 @app.route("/api/stock-valuation", methods=["POST"])
 def stock_valuation():
@@ -412,6 +462,34 @@ def get_company_basic_info(ticker):
     }
 
     return info_dict
+
+
+# Predict using the combined model
+def predict_stock_price_combined_model(ticker, model, seq_length=60):
+    # Download stock data
+    stock_data = yf.download(ticker, start="2010-01-01", end="2024-10-01")
+
+    if stock_data.empty:
+        print(f"No data found for {ticker}")
+        return None
+
+    # Close prices
+    prices = stock_data['Close'].values.reshape(-1, 1)
+
+    # Scale the data
+    scaler = MinMaxScaler()
+    scaled_prices = scaler.fit_transform(prices)
+
+    # Create sequences for prediction
+    test_data = scaled_prices[-(seq_length + 1):]
+    X_test = np.array([test_data[:seq_length]])
+    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+
+    # Predict and inverse transform to get actual prices
+    predicted_scaled = model.predict(X_test)
+    predicted_price = scaler.inverse_transform(predicted_scaled)
+
+    return predicted_price[0][0]
 
 
 def generate_timeseries_plot(df, chosen_company):

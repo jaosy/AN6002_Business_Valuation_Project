@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 
 # Load the JSON data from the file
-with open('sp500_tickers.json', 'r') as file:
+with open("./sp500_tickers.json", "r") as file:
     sp500Json = json.load(file)
 
 
@@ -34,23 +34,25 @@ valid_time_periods = {
 @app.route("/api/sp500_tickers", methods=["GET"])
 def get_sp500_tickers():
     # Fetch S&P 500 constituents from Wikipedia
-    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     tables = pd.read_html(url)
     df = tables[0]  # The first table contains the S&P 500 data
-    df = df[['Symbol', 'GICS Sector', 'Security']]  # Select relevant columns
-    tickers_data = df.set_index('Symbol')[['GICS Sector', 'Security']].to_dict(orient='index')  # Create a dictionary of tickers, sectors, and company names
+    df = df[["Symbol", "GICS Sector", "Security"]]  # Select relevant columns
+    tickers_data = df.set_index("Symbol")[["GICS Sector", "Security"]].to_dict(
+        orient="index"
+    )  # Create a dictionary of tickers, sectors, and company names
     return jsonify(tickers_data)
 
 
 @app.route("/api/stock-data", methods=["POST"])
 def get_stock_data():
     data = request.json
-    ticker = data.get('company')
+    ticker = data.get("company")
 
-    company_name = sp500Json[ticker]['Security']
+    company_name = sp500Json[ticker]["Security"]
 
-    time_period = valid_time_periods[data.get('time_period')]
-    
+    time_period = valid_time_periods[data.get("time_period")]
+
     # Fetch stock data
     stock_data = yf.Ticker(ticker).history(period=time_period)
 
@@ -63,13 +65,15 @@ def get_stock_data():
     # Get company summary metrics
     summary_data = get_company_summary(ticker, company_name, time_period)
 
-    return jsonify({
-        'company': company_name,
-        'info': info,
-        'ticker_symbol': ticker,
-        'plot': plotJSON,  # Return the HTML content
-        'summary_data': summary_data
-    })
+    return jsonify(
+        {
+            "company": company_name,
+            "info": info,
+            "ticker_symbol": ticker,
+            "plot": plotJSON,  # Return the HTML content
+            "summary_data": summary_data,
+        }
+    )
 
 
 @app.route("/api/stock-valuation", methods=["POST"])
@@ -347,14 +351,14 @@ def stock_valuation():
 
     # Prepare output
     data = {
-        'Ticker': ticker,
-        'Company Name': company,
-        'Sector': sector,
-        'Enterprise Value (Millions)': enterprise_value_millions,
-        'Net Debt (Millions)': net_debt_millions,
-        'Equity Value (Millions)': equity_value_millions
+        "Ticker": ticker,
+        "Company Name": company,
+        "Sector": sector,
+        "Enterprise Value (Millions)": enterprise_value_millions,
+        "Net Debt (Millions)": net_debt_millions,
+        "Equity Value (Millions)": equity_value_millions,
     }
-    
+
     return jsonify(data)
 
 
@@ -446,7 +450,7 @@ def generate_timeseries_plot(df, chosen_company):
             name="Max Price",
             marker=dict(color="blue", size=10),
             text=[f"Max: ${max_value:.2f}<br>Date: {max_date.date()}"],
-            textposition="top right",  # Adjusted position
+            textposition="middle right",  # Adjusted position
         )
     )
 
@@ -458,7 +462,7 @@ def generate_timeseries_plot(df, chosen_company):
             name="Min Price",
             marker=dict(color="red", size=10),
             text=[f"Min: ${min_value:.2f}<br>Date: {min_date.date()}"],
-            textposition="bottom right",  # Adjusted position
+            textposition="middle right",  # Adjusted position
         )
     )
 

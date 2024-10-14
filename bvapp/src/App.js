@@ -146,8 +146,7 @@ function App() {
           </div>
         </div>
       )}
-
-      {stockValuation && (
+     {stockValuation && (
         <div style={styles.resultContainer}>
           <h2 style={styles.resultHeader}>Results for {stockValuation.Ticker}</h2>
           <div style={styles.infoContainer}>

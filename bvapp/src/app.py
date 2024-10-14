@@ -180,6 +180,7 @@ def generate_arima_forecast_timeseries(ticker):
 
 
 
+
 @app.route("/api/stock-valuation", methods=["POST"])
 def stock_valuation():
     data = request.json

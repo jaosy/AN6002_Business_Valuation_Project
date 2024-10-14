@@ -138,6 +138,32 @@ function App() {
           <div style={styles.infoContainer}>
             <h3 style={styles.infoHeader}>Company Info</h3>
             <ul style={styles.list}>
+              {Object.entries(stockData.info).map(([key, value]) => (
+                <li key={key} style={styles.listItem}>{key}: {value}</li>
+              ))}
+            </ul>
+            <GeoChart sx={{marginBottom: 0}} state={stockData.info['Address'].split(',')[2].trim().split(' ').slice(-2, -1)[0]} />
+          </div>
+        </div>
+      )}
+
+      {stockValuation && (
+        <div style={styles.resultContainer}>
+          <h2 style={styles.resultHeader}>Results for {stockValuation.Ticker}</h2>
+          <div style={styles.infoContainer}>
+            <h3 style={styles.infoHeader}>Valuation Details</h3>
+            <ul style={styles.list}>
+              <li>Company Name: {stockValuation['Company Name']}</li>
+              <li>Sector: {stockValuation.Sector}</li>
+              <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
+              <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
+              <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
+              <li>Intrinsic Value per Share: {stockValuation['Intrinsic Value per Share']}</li>
+            </ul>
+          </div>
+          <div style={styles.infoContainer}>
+            <h3 style={styles.infoHeader}>Company Info</h3>
+            <ul style={styles.list}>
              {orderedKeys.map((key) => (
                 stockData.info[key] !== undefined && (
                   <li key={key} style={styles.listItem}>{key}: {stockData.info[key]}</li>

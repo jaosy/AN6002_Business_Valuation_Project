@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 import plotly as plotly
 import requests
 import yfinance as yf
@@ -375,6 +376,23 @@ def get_ticker(company_name):
     return company_code
 
 
+# def get_company_logo(company_domain):
+#     # Using Clearbit's logo API to get the company logo
+#     logo_url = f"https://logo.clearbit.com/{company_domain}"
+
+#     try:
+#         response = requests.get(logo_url)
+#         response.raise_for_status()
+
+#         # Open the image and display it
+#         img = Image.open(BytesIO(response.content))
+#         img.show()
+#         return img
+#     except Exception as e:
+#         print(f"Could not retrieve logo for {company_domain}: {e}")
+#         return None
+
+
 def get_company_basic_info(ticker):
     stock = yf.Ticker(ticker)
 
@@ -406,9 +424,9 @@ def get_company_basic_info(ticker):
     overall_risk = info.get("overallRisk", "N/A")
 
     info_dict = {
-        "Full-time Employees": full_time_employees,
-        "Address": full_address,
         "Company Summary": company_summary,
+        "Address": full_address,
+        "Full-time Employees": full_time_employees,
         "Audit Risk": audit_risk,
         "Board Risk": board_risk,
         "Compensation Risk": compensation_risk,

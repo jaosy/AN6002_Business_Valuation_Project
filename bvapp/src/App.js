@@ -18,6 +18,7 @@ function App() {
   const [stockValuation, setStockValuation] = useState(null); // State for stock valuation
   const [stockDataPlot, setStockDataPlot] = useState(0);
   const [loading, setLoading] = useState(false);
+  const orderedKeys = ['Company Summary', 'Address', 'Full-time Employees', 'Audit Risk','Board Risk','Compensation Risk','Shareholder Rights Risk','Overall Risk'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -137,11 +138,10 @@ function App() {
           <div style={styles.infoContainer}>
             <h3 style={styles.infoHeader}>Company Info</h3>
             <ul style={styles.list}>
-              <li style={styles.listItem}>Address: {stockData.info['Address']}</li>
-              <li style={styles.listItem}></li>
-              <li styles={styles.listItem}>{stockData.info['Address']}</li>
-              {Object.entries(stockData.info).map(([key, value]) => (
-                <li key={key} style={styles.listItem}>{key}: {value}</li>
+             {orderedKeys.map((key) => (
+                stockData.info[key] !== undefined && (
+                  <li key={key} style={styles.listItem}>{key}: {stockData.info[key]}</li>
+                )
               ))}
             </ul>
             <GeoChart state={stockData.info['Address'].split(',')[2].trim().split(' ').slice(-2, -1)[0]} />

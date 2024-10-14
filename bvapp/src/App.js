@@ -145,8 +145,10 @@ function App() {
           <div style={styles.infoContainer}>
             <h3 style={styles.infoHeader}>Company Info</h3>
             <ul style={styles.list}>
-              {Object.entries(stockData.info).map(([key, value]) => (
-                <li key={key} style={styles.listItem}>{key}: {value}</li>
+             {orderedKeys.map((key) => (
+                stockData.info[key] !== undefined && (
+                  <li key={key} style={styles.listItem}>{key}: {stockData.info[key]}</li>
+                )
               ))}
             </ul>
             <GeoChart sx={{marginBottom: 0}} state={stockData.info['Address'].split(',')[2].trim().split(' ').slice(-2, -1)[0]} />

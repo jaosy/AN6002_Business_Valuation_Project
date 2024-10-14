@@ -4,6 +4,7 @@ from keras.models import load_model
 from pmdarima import auto_arima
 import statsmodels.api as sm
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 import plotly as plotly
 from PIL import Image
 from io import BytesIO
@@ -496,6 +497,23 @@ def get_ticker(company_name):
 
     company_code = data["quotes"][0]["symbol"]
     return company_code
+
+
+# def get_company_logo(company_domain):
+#     # Using Clearbit's logo API to get the company logo
+#     logo_url = f"https://logo.clearbit.com/{company_domain}"
+
+#     try:
+#         response = requests.get(logo_url)
+#         response.raise_for_status()
+
+#         # Open the image and display it
+#         img = Image.open(BytesIO(response.content))
+#         img.show()
+#         return img
+#     except Exception as e:
+#         print(f"Could not retrieve logo for {company_domain}: {e}")
+#         return None
 
 
 def get_company_basic_info(ticker):

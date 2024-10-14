@@ -19,10 +19,8 @@ app = Flask(__name__)
 with open("./sp500_tickers.json", "r") as file:
     sp500Json = json.load(file)
 
-
 # Load the stock price prediction model
 model = load_model('combined_sp500_lstm_model.h5')
-
 
 valid_time_periods = {
     "1 day": "1d",
@@ -61,6 +59,7 @@ def get_stock_data():
 
     time_period = valid_time_periods[data.get("time_period")]
 
+
     if model:
         ticker_to_predict = 'AAPL'
         predicted_price = predict_stock_price_combined_model(ticker_to_predict, model)
@@ -68,7 +67,6 @@ def get_stock_data():
             print(f"Predicted stock price for {ticker_to_predict}: {predicted_price}")
 
     time_period = valid_time_periods[data.get('time_period')]
-    
     # Fetch stock data
     stock_data = yf.Ticker(ticker).history(period=time_period)
 
@@ -90,6 +88,7 @@ def get_stock_data():
             "summary_data": summary_data,
         }
     )
+
 
 
 @app.route("/api/arima-forecast", methods=["POST"])
@@ -426,6 +425,21 @@ def get_ticker(company_name):
     company_code = data["quotes"][0]["symbol"]
     return company_code
 
+# def get_company_logo(company_domain):
+#     # Using Clearbit's logo API to get the company logo
+#     logo_url = f"https://logo.clearbit.com/{company_domain}"
+
+#     try:
+#         response = requests.get(logo_url)
+#         response.raise_for_status()
+
+#         # Open the image and display it
+#         img = Image.open(BytesIO(response.content))
+#         img.show()
+#         return img
+#     except Exception as e:
+#         print(f"Could not retrieve logo for {company_domain}: {e}")
+#         return None
 
 def get_company_basic_info(ticker):
     stock = yf.Ticker(ticker)
@@ -458,9 +472,10 @@ def get_company_basic_info(ticker):
     overall_risk = info.get("overallRisk", "N/A")
 
     info_dict = {
-        "Full-time Employees": full_time_employees,
-        "Address": full_address,
+
         "Company Summary": company_summary,
+        "Address": full_address,
+        "Full-time Employees": full_time_employees,
         "Audit Risk": audit_risk,
         "Board Risk": board_risk,
         "Compensation Risk": compensation_risk,
@@ -469,7 +484,6 @@ def get_company_basic_info(ticker):
     }
 
     return info_dict
-
 
 # Predict using the combined model
 def predict_stock_price_combined_model(ticker, model, seq_length=60):
@@ -497,7 +511,6 @@ def predict_stock_price_combined_model(ticker, model, seq_length=60):
     predicted_price = scaler.inverse_transform(predicted_scaled)
 
     return predicted_price[0][0]
-
 
 def generate_timeseries_plot(df, chosen_company):
     # Create a Plotly figure

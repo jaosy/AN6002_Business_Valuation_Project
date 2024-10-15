@@ -16,8 +16,10 @@ function App() {
   const [timePeriod, setTimePeriod] = useState('');
   const [stockData, setStockData] = useState(null); // State for stock data
   const [stockValuation, setStockValuation] = useState(null); // State for stock valuation
-  const [stockDataPlot, setStockDataPlot] = useState(0);
+  const [stockDataPlot, setStockDataPlot] = useState(null);
+  const [forecastPlot, setForecastPlot] = useState(null);
   const [loading, setLoading] = useState(false);
+  const orderedKeys = ['Company Summary', 'Address', 'Full-time Employees', 'Audit Risk','Board Risk','Compensation Risk','Shareholder Rights Risk','Overall Risk'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +44,7 @@ function App() {
       const data = await response.json();
       setStockData(data);
       setStockDataPlot(JSON.parse(data.plot));
+      setForecastPlot(JSON.parse(data['forecast_plot']));
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -123,8 +126,13 @@ function App() {
       {stockData && (
         <div style={styles.resultContainer}>
           <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
-          <div style={styles.plotContainer}>
-            <Plot data={stockDataPlot.data} layout={stockDataPlot.layout} />
+          <div sx={{display: "flex", flexDirection:"col"}}>
+            <div style={{ marginBottom: '20px' }}> {/* Optional margin for spacing */}
+              <Plot data={stockDataPlot.data} layout={stockDataPlot.layout} />
+            </div>
+            <div>
+              <Plot data={forecastPlot.data} layout={forecastPlot.layout} />
+            </div>
           </div>
           <div style={styles.infoContainer}>
             <h3 style={styles.infoHeader}>Summary Data</h3>
@@ -142,6 +150,33 @@ function App() {
               ))}
             </ul>
             <GeoChart sx={{marginBottom: 0}} state={stockData.info['Address'].split(',')[2].trim().split(' ').slice(-2, -1)[0]} />
+          </div>
+        </div>
+      )}
+     {stockValuation && (
+        <div style={styles.resultContainer}>
+          <h2 style={styles.resultHeader}>Results for {stockValuation.Ticker}</h2>
+          <div style={styles.infoContainer}>
+            <h3 style={styles.infoHeader}>Valuation Details</h3>
+            <ul style={styles.list}>
+              <li>Company Name: {stockValuation['Company Name']}</li>
+              <li>Sector: {stockValuation.Sector}</li>
+              <li>Enterprise Value (Millions): {stockValuation['Enterprise Value (Millions)']}</li>
+              <li>Net Debt (Millions): {stockValuation['Net Debt (Millions)']}</li>
+              <li>Equity Value (Millions): {stockValuation['Equity Value (Millions)']}</li>
+              <li>Intrinsic Value per Share: {stockValuation['Intrinsic Value per Share']}</li>
+            </ul>
+          </div>
+          <div style={styles.infoContainer}>
+            <h3 style={styles.infoHeader}>Company Info</h3>
+            <ul style={styles.list}>
+             {orderedKeys.map((key) => (
+                stockData.info[key] !== undefined && (
+                  <li key={key} style={styles.listItem}>{key}: {stockData.info[key]}</li>
+                )
+              ))}
+            </ul>
+            <GeoChart state={stockData.info['Address'].split(',')[2].trim().split(' ').slice(-2, -1)[0]} />
           </div>
         </div>
       )}

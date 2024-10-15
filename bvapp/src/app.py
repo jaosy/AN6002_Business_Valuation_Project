@@ -5,6 +5,8 @@ from pmdarima import auto_arima
 import statsmodels.api as sm
 import plotly.graph_objects as go
 import plotly as plotly
+from PIL import Image
+from io import BytesIO
 import requests
 import yfinance as yf
 import pandas as pd
@@ -19,10 +21,8 @@ app = Flask(__name__)
 with open("./sp500_tickers.json", "r") as file:
     sp500Json = json.load(file)
 
-
 # Load the stock price prediction model
-model = load_model('combined_sp500_lstm_model.h5')
-
+model = load_model("combined_sp500_lstm_model.h5")
 
 valid_time_periods = {
     "1 day": "1d",
@@ -62,18 +62,18 @@ def get_stock_data():
     time_period = valid_time_periods[data.get("time_period")]
 
     if model:
-        ticker_to_predict = 'AAPL'
+        ticker_to_predict = "AAPL"
         predicted_price = predict_stock_price_combined_model(ticker_to_predict, model)
         if predicted_price:
             print(f"Predicted stock price for {ticker_to_predict}: {predicted_price}")
 
-    time_period = valid_time_periods[data.get('time_period')]
-    
+    time_period = valid_time_periods[data.get("time_period")]
     # Fetch stock data
     stock_data = yf.Ticker(ticker).history(period=time_period)
 
     # Generate plots
     plotJSON = generate_timeseries_plot(stock_data, company_name)
+    forecastPlotJSON = generate_arima_forecast_timeseries(ticker)
 
     # Get company basic info
     info = get_company_basic_info(ticker)
@@ -87,46 +87,97 @@ def get_stock_data():
             "info": info,
             "ticker_symbol": ticker,
             "plot": plotJSON,  # Return the HTML content
+            "forecast_plot": forecastPlotJSON,
             "summary_data": summary_data,
         }
     )
 
 
-@app.route("/api/arima-forecast", methods=["POST"])
-def forecast_stock():
-    data = request.json
-    ticker = data.get('company')
-
+# @app.route("/api/arima-forecast", methods=["POST"])
+def generate_arima_forecast_timeseries(ticker):
     print(f"\nFetching data for {ticker}...\n")
     stock_data = yf.download(ticker, start="2015-01-01", end="2024-01-01")
 
-    # Augmented Dickey-Fuller test to check if time series is statonary
+    # Augmented Dickey-Fuller test to check if time series is stationary
     result = sm.tsa.adfuller(stock_data['Close'])
     print(f'ADF Statistic: {result[0]}')
     print(f'p-value: {result[1]}')
 
-    stock_diff = stock_data['Close'].diff().dropna()
+    stock_diff = stock_data["Close"].diff().dropna()
     arima_model = auto_arima(stock_diff, seasonal=False, trace=True, stepwise=True)
 
     # Forecast 30 business days
     n_periods = 30
     forecast, conf_int = arima_model.predict(n_periods=n_periods, return_conf_int=True)
-    forecast_dates = pd.date_range(stock_data.index[-1], periods=n_periods, freq='B')
+    forecast_dates = pd.date_range(stock_data.index[-1], periods=n_periods, freq="B")
 
-    print(forecast.cumsum() + stock_data['Close'].iloc[-1])
+    # Create a Plotly figure
+    fig = go.Figure()
 
-    
+    # Add historical stock prices
+    fig.add_trace(
+        go.Scatter(
+            x=stock_data.index,
+            y=stock_data['Close'],
+            mode='lines',
+            name=f'{ticker} Stock Price',
+            line=dict(color='green', width=2),
+            hoverinfo='text',
+            hovertext=stock_data['Close'].apply(lambda x: f"Price: ${x:.2f}"),
+        )
+    )
 
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(stock_data.index, stock_data['Close'], label=f'{ticker} Stock Price')
-    # plt.plot(forecast_dates, forecast.cumsum() + stock_data['Close'].iloc[-1], label='Forecast', color='red')
-    # plt.fill_between(forecast_dates, 
-    #                 conf_int[:, 0].cumsum() + stock_data['Close'].iloc[-1], 
-    #                 conf_int[:, 1].cumsum() + stock_data['Close'].iloc[-1], 
-    #                 color='red', alpha=0.3)
-    # plt.title(f'{ticker} Stock Price Forecast')
-    # plt.legend()
-    # plt.show()
+    # Add forecast line
+    fig.add_trace(
+        go.Scatter(
+            x=forecast_dates,
+            y=forecast.cumsum() + stock_data['Close'].iloc[-1],
+            mode='lines',
+            name='Forecast',
+            line=dict(color='red', width=2),
+        )
+    )
+
+    # Add confidence interval fill
+    fig.add_trace(
+        go.Scatter(
+            x=forecast_dates,
+            y=conf_int[:, 0].cumsum() + stock_data['Close'].iloc[-1],
+            mode='lines',
+            line=dict(color='red', width=0),
+            showlegend=False
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=forecast_dates,
+            y=conf_int[:, 1].cumsum() + stock_data['Close'].iloc[-1],
+            mode='lines',
+            line=dict(color='red', width=0),
+            fill='tonexty',  # Fill between the two lines
+            fillcolor='rgba(255, 0, 0, 0.3)',  # Fill color with transparency
+            name='Confidence Interval',
+            showlegend=True
+        )
+    )
+
+    # Update layout
+    fig.update_layout(
+        title=f'{ticker} Stock Price Forecast',
+        xaxis_title='Date',
+        yaxis_title='Price (US$)',
+        legend_title='Legend',
+        hovermode='x unified',
+        template='plotly_white',  # Use a clean white template
+        margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
+    )
+
+    graphJSON = plotly.io.to_json(fig, pretty=True)
+    return graphJSON
+
+
+
 
 @app.route("/api/stock-valuation", methods=["POST"])
 def stock_valuation():
@@ -242,10 +293,11 @@ def stock_valuation():
     # Cost of Debt
     try:
         total_debt = (
-            balance_sheet.loc["Short Long Term Debt"].iloc[0]
-            + balance_sheet.loc["Long Term Debt"].iloc[0]
+            # balance_sheet.loc["Short Long Term Debt"].iloc[0]+ #commennted because it got removed from yf balance sheet
+            balance_sheet.loc["Long Term Debt"].iloc[0]
         )
     except KeyError:
+        total_debt = balance_sheet.loc["Long Term Debt"].iloc[0]
         total_debt = balance_sheet.loc["Long Term Debt"].iloc[0]
     try:
         interest_expense = income_stmt.loc["Interest Expense"].iloc[0]
@@ -415,6 +467,23 @@ def stock_valuation():
     return jsonify(data)
 
 
+def get_company_logo(company_domain):
+    # Using Clearbit's logo API to get the company logo
+    logo_url = f"https://logo.clearbit.com/{company_domain}"
+
+    try:
+        response = requests.get(logo_url)
+        response.raise_for_status()
+
+        # Open the image and display it
+        img = Image.open(BytesIO(response.content))
+        # img.show()
+        return jsonify(img)
+    except Exception as e:
+        print(f"Could not retrieve logo for {company_domain}: {e}")
+        return None
+
+
 def get_ticker(company_name):
     yfinance = "https://query2.finance.yahoo.com/v1/finance/search"
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
@@ -440,6 +509,12 @@ def get_company_basic_info(ticker):
     state = info.get("state", "")
     zip_code = info.get("zip", "")
     country = info.get("country", "N/A")
+    company_domain = (
+        info.get("website", "N/A")
+        .replace("https://", "")
+        .replace("http://", "")
+        .strip("/")
+    )
 
     # Format full address
     full_address = (
@@ -456,16 +531,18 @@ def get_company_basic_info(ticker):
     compensation_risk = info.get("compensationRisk", "N/A")
     shareholder_rights_risk = info.get("shareHolderRightsRisk", "N/A")
     overall_risk = info.get("overallRisk", "N/A")
+    logo = get_company_logo(company_domain)
 
     info_dict = {
-        "Full-time Employees": full_time_employees,
-        "Address": full_address,
         "Company Summary": company_summary,
+        "Address": full_address,
+        "Full-time Employees": full_time_employees,
         "Audit Risk": audit_risk,
         "Board Risk": board_risk,
         "Compensation Risk": compensation_risk,
         "Shareholder Rights Risk": shareholder_rights_risk,
         "Overall Risk": overall_risk,
+        "Company Logo": logo,
     }
 
     return info_dict
@@ -481,14 +558,14 @@ def predict_stock_price_combined_model(ticker, model, seq_length=60):
         return None
 
     # Close prices
-    prices = stock_data['Close'].values.reshape(-1, 1)
+    prices = stock_data["Close"].values.reshape(-1, 1)
 
     # Scale the data
     scaler = MinMaxScaler()
     scaled_prices = scaler.fit_transform(prices)
 
     # Create sequences for prediction
-    test_data = scaled_prices[-(seq_length + 1):]
+    test_data = scaled_prices[-(seq_length + 1) :]
     X_test = np.array([test_data[:seq_length]])
     X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
 
@@ -572,7 +649,7 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
 
     # Create a summary dictionary
     summary = {
-        "P/E Ratio": f'{info.get("trailingPE", "N/A"):.2f}',
+        "P/E Ratio": f'{info["trailingPE"]:.2f}' if "trailingPE" in info and info["trailingPE"] is not None else "N/A",
         "High": (
             f'$ {stock_data["High"].iloc[-1]:.2f}' if not stock_data.empty else "N/A"
         ),

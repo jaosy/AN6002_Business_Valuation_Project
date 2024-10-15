@@ -75,6 +75,7 @@ def get_stock_data():
     # Generate plots
     plotJSON = generate_timeseries_plot(stock_data, company_name)
     forecastPlotJSON = generate_arima_forecast_timeseries(ticker)
+    generate_industry_plot()
 
     # Get company basic info
     info = get_company_basic_info(ticker)
@@ -487,6 +488,67 @@ def get_company_logo(company_domain):
         print(f"Could not retrieve logo for {company_domain}: {e}")
         return None
 
+
+"""Calculate and display an industry summary based on all the companies in the industry."""
+def generate_industry_plot(companies, industry, chosen_company):
+    print(chosen_company)
+    pe_ratios = []
+    market_caps = []
+
+    for ticker_symbol, name in companies:
+        try:
+            company = yf.Ticker(ticker_symbol)
+            info = company.info
+
+            # Append values for each company in the industry
+            pe_ratios.append(info.get("trailingPE", 0))
+            market_caps.append(info.get("marketCap", 0))
+
+        except Exception as e:
+            print(f"Error fetching data for {ticker_symbol}: {e}")
+            continue
+
+    # Combine companies and P/E ratios into a list of tuples
+    combined_data = list(zip(companies, pe_ratios))
+
+    # Sort the combined data by P/E ratio in descending order
+    sorted_data = sorted(combined_data, key=lambda x: x[1], reverse=True)
+
+    # Unzip the sorted data back into two lists
+    sorted_companies, sorted_pe_ratios = zip(*sorted_data)
+
+    # Create a list of colors, highlighting the chosen company
+    print(sorted_companies)
+    print(chosen_company)
+    print(name == chosen_company)
+    colors = ['orange' if ticker == chosen_company else 'skyblue' for ticker, name in sorted_companies]
+
+    # Create a Plotly figure
+    fig = go.Figure()
+
+    # Add horizontal bar chart
+    fig.add_trace(
+        go.Bar(
+            y=[name for _, name in sorted_companies], 
+            x=sorted_pe_ratios,
+            orientation='h',  # Horizontal bar chart
+            marker=dict(color=colors),
+        )
+    )
+
+    # Update layout for better formatting
+    fig.update_layout(
+        title=f"P/E Ratios of {industry} Companies",
+        xaxis_title="P/E Ratio",
+        yaxis_title="Companies",
+        height=800,  # Increase height for better visibility
+        width=1000,  # Increase width for better visibility
+        margin=dict(l=100, r=20, t=50, b=50),  # Add margins
+        template="plotly_white",  # Use a clean white template,
+    )
+
+    # Show the figure
+    fig.show()
 
 def get_ticker(company_name):
     yfinance = "https://query2.finance.yahoo.com/v1/finance/search"

@@ -637,9 +637,6 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
             else "N/A"
         ),
     }
-
-    print(summary)
-
     return summary
 
 

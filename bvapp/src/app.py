@@ -94,7 +94,7 @@ def get_stock_data():
     )
 
 
-# @app.route("/api/arima-forecast", methods=["POST"])
+
 def generate_arima_forecast_timeseries(ticker):
     print(f"\nFetching data for {ticker}...\n")
     stock_data = yf.download(ticker, start="2015-01-01", end="2024-01-01")
@@ -203,7 +203,7 @@ def stock_valuation():
 
     if income_stmt.empty or cash_flow.empty or balance_sheet.empty:
         return jsonify({"error": "Financial data not available for this ticker."}), 400
-
+    
     sector = info.get("sector", "Unknown")
     company = info.get("shortName", "Unknown")
 
@@ -479,9 +479,10 @@ def get_company_logo(company_domain):
         response.raise_for_status()
 
         # Open the image and display it
-        img = Image.open(BytesIO(response.content))
-        # img.show()
-        return jsonify(img)
+        # img = Image.open(BytesIO(response.content))
+        # # img.show()
+
+        return logo_url
     except Exception as e:
         print(f"Could not retrieve logo for {company_domain}: {e}")
         return None
@@ -497,23 +498,6 @@ def get_ticker(company_name):
 
     company_code = data["quotes"][0]["symbol"]
     return company_code
-
-
-# def get_company_logo(company_domain):
-#     # Using Clearbit's logo API to get the company logo
-#     logo_url = f"https://logo.clearbit.com/{company_domain}"
-
-#     try:
-#         response = requests.get(logo_url)
-#         response.raise_for_status()
-
-#         # Open the image and display it
-#         img = Image.open(BytesIO(response.content))
-#         img.show()
-#         return img
-#     except Exception as e:
-#         print(f"Could not retrieve logo for {company_domain}: {e}")
-#         return None
 
 
 def get_company_basic_info(ticker):
@@ -710,8 +694,6 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
             else "N/A"
         ),
     }
-
-    print(summary)
 
     return summary
 

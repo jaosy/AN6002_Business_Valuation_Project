@@ -32,6 +32,8 @@ function App() {
   const [stockValuation, setStockValuation] = useState(null); // State for stock valuation
   const [stockDataPlot, setStockDataPlot] = useState(null);
   const [forecastPlot, setForecastPlot] = useState(null);
+  const [companyPlot, setCompanyPlot] = useState(null);
+  const [industryPEPlot, setIndustryPEPlot] = useState(null);
   const [loading, setLoading] = useState(false);
   const orderedKeys = [
     "Company Summary",
@@ -65,9 +67,14 @@ function App() {
       }
 
       const data = await response.json();
+
       setStockData(data);
-      setStockDataPlot(JSON.parse(data.plot));
+      setCompanyPlot(JSON.parse(data["monetary_plot"]));
+      if (timePeriod == "1 day")
+        setCompanyPlot(JSON.parse(data["monetary_plot"]));
+      else setStockDataPlot(JSON.parse(data.plot));
       setForecastPlot(JSON.parse(data["forecast_plot"]));
+      setIndustryPEPlot(JSON.parse(data["industry_pe_plot"]));
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -174,7 +181,7 @@ function App() {
         </div>
       )}
 
-      {stockData && (
+      {stockData && timePeriod != "1 day" && (
         <div style={styles.resultContainer}>
           <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
           <div sx={{ display: "flex", flexDirection: "col" }}>
@@ -185,6 +192,12 @@ function App() {
             </div>
             <div>
               <Plot data={forecastPlot.data} layout={forecastPlot.layout} />
+            </div>
+            <div>
+              <Plot data={industryPEPlot.data} layout={industryPEPlot.layout} />
+            </div>
+            <div>
+              <Plot data={companyPlot.data} layout={companyPlot.layout} />
             </div>
           </div>
           <div style={styles.infoContainer}>
@@ -204,7 +217,7 @@ function App() {
                 <img
                   src={stockData["info"]["Company Logo"]}
                   alt="Company Logo"
-                  style={{ width: "200px", height: "auto" }} // Adjust size as needed
+                  style={{ width: "200px", height: "200px" }} // Adjust size as needed
                 />
               </div>
             )}

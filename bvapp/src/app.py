@@ -6,8 +6,7 @@ import statsmodels.api as sm
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import plotly as plotly
-from PIL import Image
-from io import BytesIO
+from plotly.subplots import make_subplots
 import requests
 import yfinance as yf
 import pandas as pd
@@ -62,6 +61,24 @@ def get_stock_data():
 
     time_period = valid_time_periods[data.get("time_period")]
 
+    # Get company basic info
+    info = get_company_basic_info(ticker)
+
+    # Get company summary metrics
+    summary_data = get_company_summary(ticker, company_name, time_period)
+
+    result = {
+        "company": company_name,
+        "info": info,
+        "ticker_symbol": ticker,
+        "summary_data": summary_data,
+    }
+
+
+    company_bar_chartsJSON = generate_monetary_charts_1d(ticker, company_name)
+
+    result['monetary_plot'] = company_bar_chartsJSON
+
     industry_name = sp500Json[ticker]['GICS Sector']
 
     # get other companies in the same industry for basket comparison
@@ -81,24 +98,14 @@ def get_stock_data():
     # Generate plots
     plotJSON = generate_timeseries_plot(stock_data, company_name)
     forecastPlotJSON = generate_arima_forecast_timeseries(ticker)
-    generate_industry_plot(companies_in_industry, industry_name, ticker)
+    industryPEPlotJson = generate_industry_plot(companies_in_industry, industry_name, ticker)
 
-    # Get company basic info
-    info = get_company_basic_info(ticker)
+    result['forecast_plot'] = forecastPlotJSON
+    result['plot'] = plotJSON
+    result['industry_pe_plot'] = industryPEPlotJson
 
-    # Get company summary metrics
-    summary_data = get_company_summary(ticker, company_name, time_period)
-
-    return jsonify(
-        {
-            "company": company_name,
-            "info": info,
-            "ticker_symbol": ticker,
-            "plot": plotJSON,  # Return the HTML content
-            "forecast_plot": forecastPlotJSON,
-            "summary_data": summary_data,
-        }
-    )
+    print(result)
+    return jsonify(result)
 
 
 
@@ -183,10 +190,6 @@ def generate_arima_forecast_timeseries(ticker):
 
     graphJSON = plotly.io.to_json(fig, pretty=True)
     return graphJSON
-
-
-
-
 
 
 @app.route("/api/stock-valuation", methods=["POST"])
@@ -500,8 +503,9 @@ def generate_industry_plot(companies, industry, chosen_company):
             info = company.info
 
             # Append values for each company in the industry
-            pe_ratios.append(info.get("trailingPE", 0))
-            market_caps.append(info.get("marketCap", 0))
+            if (info.get("trailingPE") and info.get("marketCap")):
+                pe_ratios.append(info.get("trailingPE", 0))
+                market_caps.append(info.get("marketCap", 0))
 
         except Exception as e:
             print(f"Error fetching data for {ticker_symbol}: {e}")
@@ -543,8 +547,8 @@ def generate_industry_plot(companies, industry, chosen_company):
         template="plotly_white",  # Use a clean white template,
     )
 
-    # Show the figure
-    fig.show()
+    graphJSON = plotly.io.to_json(fig, pretty=True)
+    return graphJSON
 
 def get_ticker(company_name):
     yfinance = "https://query2.finance.yahoo.com/v1/finance/search"
@@ -703,6 +707,126 @@ def generate_timeseries_plot(df, chosen_company):
     return graphJSON
 
 
+def generate_monetary_charts_1d(ticker_symbol, company_name):
+    company = yf.Ticker(ticker_symbol)
+    stock_data = company.history(period="1d")
+    
+    # Fetch stock data
+    info = company.info
+
+    # Create a dictionary to store data in a tabular format
+    data = {
+        "Metric": [
+            "Stock P/E (TTM)", "High", "Low", "Current Price", "Market Cap",
+            "EPS (TTM)", "Gross Profits", "Pre-tax Income", "EBITDA",
+            "Total Liabilities", "Total Assets", "End Cash Position",
+        ],
+        "Value": [
+            info.get("trailingPE", "N/A"),
+            stock_data["High"].iloc[-1] if not stock_data.empty else "N/A",
+            stock_data["Low"].iloc[-1] if not stock_data.empty else "N/A",
+            stock_data["Close"].iloc[-1] if not stock_data.empty else "N/A",
+            info.get("marketCap", "N/A"),
+            info.get("trailingEps", "N/A"),
+            company.financials.loc["Gross Profit"][0] if "Gross Profit" in company.financials.index else "N/A",
+            company.financials.loc["Pretax Income"][0] if "Pretax Income" in company.financials.index else "N/A",
+            company.financials.loc["EBITDA"][0] if "EBITDA" in company.financials.index else "N/A",
+            company.balance_sheet.loc["Total Liabilities Net Minority Interest"][0] if "Total Liabilities Net Minority Interest" in company.balance_sheet.index else "N/A",
+            company.balance_sheet.loc["Total Assets"][0] if "Total Assets" in company.balance_sheet.index else "N/A",
+            company.cashflow.loc["End Cash Position"][0] if "End Cash Position" in company.cashflow.index else "N/A",
+        ],
+    }
+
+    # Convert the data into a pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Create a new column 'Formatted Value' with the formatted values
+    df['Formatted Value'] = df['Value'].apply(format_value)
+
+    # Create subplots
+    fig = make_subplots(
+        rows=2, cols=2,
+        specs=[[{"type": "table"}, {"type": "bar"}],
+                [{"type": "bar", "colspan": 2}, None]],
+        subplot_titles=("Company Summary", f"Liabilities, Assets, Cash - {company_name}",
+                        "EBITDA vs Gross Profit"),
+        vertical_spacing=0.1,
+        horizontal_spacing=0.1,
+    )
+
+    # Add table
+    fig.add_trace(
+        go.Table(
+            header=dict(values=[df.columns[0], df.columns[1]],
+                        fill_color='royalblue',
+                        align='left',
+                        font=dict(color='white', size=12)),
+            cells=dict(values=[df.Metric, df['Formatted Value']],
+                        fill_color='lavender',
+                        align='left')
+        ),
+        row=1, col=1
+    )
+
+    # Bar Chart - Total Liabilities, Total Assets, End Cash Position
+    liabilities = data["Value"][9]
+    assets = data["Value"][10]
+    end_cash = data["Value"][11]
+
+    if all(isinstance(value, (int, float)) for value in [liabilities, assets, end_cash]):
+        labels1 = ["Total Liabilities", "Total Assets", "End Cash Position"]
+        values1 = [liabilities, assets, end_cash]
+        fig.add_trace(
+            go.Bar(x=labels1, y=values1, 
+                    text=[f"${int(v / 10**6)} mil" for v in values1],
+                    textposition='auto',
+                    marker_color=['#ff9999', '#66b3ff', '#99ff99']),
+            row=1, col=2
+        )
+    else:
+        fig.add_annotation(
+            text="Insufficient data for bar chart",
+            xref="x domain", yref="y domain",
+            x=0.5, y=0.5, showarrow=False,
+            row=1, col=2
+        )
+
+    # Bar Chart - EBITDA vs Gross Profit
+    ebitda = data["Value"][8]
+    gross_profits = data["Value"][6]
+
+    if all(isinstance(value, (int, float)) for value in [ebitda, gross_profits]):
+        fig.add_trace(
+            go.Bar(x=["EBITDA", "Gross Profit"], y=[ebitda, gross_profits],
+                    text=[f"${ebitda / 10**9:.2f} bil", f"${gross_profits / 10**9:.2f} bil"],
+                    textposition='auto',
+                    marker_color=['#ff9999', '#66b3ff']),
+            row=2, col=1
+        )
+    else:
+        fig.add_annotation(
+            text="Insufficient data for bar chart",
+            xref="x domain", yref="y domain",
+            x=0.5, y=0.5, showarrow=False,
+            row=2, col=1
+        )
+
+    # Update layout
+    fig.update_layout(
+        height=1000,
+        width=1200,
+        title_text=f"Financial Overview - {company_name}",
+        showlegend=False,
+    )
+
+    # Update y-axis labels
+    fig.update_yaxes(title_text="Value in USD", row=1, col=2)
+    fig.update_yaxes(title_text="Value in USD", row=2, col=1)
+
+    # Show the figure
+    graphJSON = plotly.io.to_json(fig, pretty=True)
+    return graphJSON
+
 def get_company_summary(ticker_symbol, choosen_company, time="1d"):
     """Fetch and return company summary information using yfinance."""
     company = yf.Ticker(ticker_symbol)
@@ -754,6 +878,15 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
     }
 
     return summary
+
+
+# Function to format values
+def format_value(val):
+    if isinstance(val, (int, float)):
+        return f"{val:,.2f}"
+    elif isinstance(val, str) and val.replace(',', '').replace('.', '').isdigit():
+        return f"{float(val.replace(',', '')):,.2f}"
+    return val
 
 
 if __name__ == "__main__":

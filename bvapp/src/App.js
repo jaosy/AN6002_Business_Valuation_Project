@@ -34,6 +34,7 @@ function App() {
   const [forecastPlot, setForecastPlot] = useState(null);
   const [companyPlot, setCompanyPlot] = useState(null);
   const [industryPEPlot, setIndustryPEPlot] = useState(null);
+  const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(false);
   const orderedKeys = [
     "Company Summary",
@@ -45,6 +46,32 @@ function App() {
     "Shareholder Rights Risk",
     "Overall Risk",
   ];
+
+  const test = async (e) => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/news", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          industry,
+          company,
+          time_period: timePeriod,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error fetching stock data");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setNews(data);
+      setLoading(false);
+    } catch (e) {}
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,13 +202,136 @@ function App() {
         </button>
       </form>
 
+      <button
+        variant="contained"
+        color="primary"
+        type="submit"
+        onClick={() => test()}
+        disabled={timePeriod === "" || industry === "" || company === ""}
+        style={
+          timePeriod === "" || industry === "" || company === ""
+            ? styles.buttonDisabled
+            : styles.button
+        }
+      >
+        Get News
+      </button>
+
       {loading && (
         <div style={styles.loader}>
           <BounceLoader color="#007bff" loading={loading} size={50} />
         </div>
       )}
 
-      {stockData && timePeriod != "1 day" && (
+      <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+        {news && (
+          <div
+            style={{
+              maxWidth: "800px",
+              margin: "0 auto",
+              backgroundColor: "#f9f9f9",
+              padding: "20px",
+              borderRadius: "10px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            {/* Render average sentiment score and category */}
+            <div
+              style={{
+                padding: "15px",
+                marginBottom: "20px",
+                backgroundColor: "#fff",
+                borderRadius: "8px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <h2 style={{ margin: "0", color: "#333" }}>
+                News Sentiment Overview
+              </h2>
+              <p style={{ fontSize: "18px", margin: "10px 0" }}>
+                <span style={{ fontWeight: "bold", color: "#546e7a" }}>
+                  Sentiment Score:
+                </span>
+                <span
+                  style={{
+                    fontSize: "20px",
+                    color: "#546e7a",
+                    marginLeft: "10px",
+                  }}
+                >
+                  {news.average_sentiment_score}
+                </span>
+              </p>
+              <p style={{ fontSize: "18px", margin: "10px 0" }}>
+                <span style={{ fontWeight: "bold", color: "#546e7a" }}>
+                  Sentiment Category:
+                </span>
+                <span
+                  style={{
+                    fontSize: "20px",
+                    color: "#546e7a",
+                    marginLeft: "10px",
+                  }}
+                >
+                  {news.avg_sentiment_category}
+                </span>
+              </p>
+            </div>
+
+            {/* Map through top_news */}
+            <div>
+              {Object.keys(news.top_news).map((key) => (
+                <div
+                  key={key}
+                  style={{
+                    padding: "15px",
+                    marginBottom: "20px",
+                    backgroundColor: "#fff",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <h3
+                    style={{
+                      marginBottom: "10px",
+                      color: "#333",
+                      textAlign: "left",
+                    }}
+                  >
+                    {news.top_news[key].title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      lineHeight: "1.6",
+                      color: "#555",
+                      textAlign: "left",
+                    }}
+                  >
+                    {news.top_news[key].text}
+                  </p>
+                  <a
+                    href={news.top_news[key].news_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-block",
+                      marginTop: "10px",
+                      fontSize: "16px",
+                      color: "#007BFF",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Read more &rarr;
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {stockData && (
         <div style={styles.resultContainer}>
           <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
           <div sx={{ display: "flex", flexDirection: "col" }}>

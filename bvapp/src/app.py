@@ -12,6 +12,7 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 import json
+import re
 
 
 app = Flask(__name__)
@@ -114,9 +115,9 @@ def generate_arima_forecast_timeseries(ticker):
     stock_data = yf.download(ticker, start="2015-01-01", end="2024-01-01")
 
     # Augmented Dickey-Fuller test to check if time series is stationary
-    result = sm.tsa.adfuller(stock_data['Close'])
-    print(f'ADF Statistic: {result[0]}')
-    print(f'p-value: {result[1]}')
+    result = sm.tsa.adfuller(stock_data["Close"])
+    print(f"ADF Statistic: {result[0]}")
+    print(f"p-value: {result[1]}")
 
     stock_diff = stock_data["Close"].diff().dropna()
     arima_model = auto_arima(stock_diff, seasonal=False, trace=True, stepwise=True)
@@ -133,12 +134,12 @@ def generate_arima_forecast_timeseries(ticker):
     fig.add_trace(
         go.Scatter(
             x=stock_data.index,
-            y=stock_data['Close'],
-            mode='lines',
-            name=f'{ticker} Stock Price',
-            line=dict(color='green', width=2),
-            hoverinfo='text',
-            hovertext=stock_data['Close'].apply(lambda x: f"Price: ${x:.2f}"),
+            y=stock_data["Close"],
+            mode="lines",
+            name=f"{ticker} Stock Price",
+            line=dict(color="green", width=2),
+            hoverinfo="text",
+            hovertext=stock_data["Close"].apply(lambda x: f"Price: ${x:.2f}"),
         )
     )
 
@@ -146,10 +147,10 @@ def generate_arima_forecast_timeseries(ticker):
     fig.add_trace(
         go.Scatter(
             x=forecast_dates,
-            y=forecast.cumsum() + stock_data['Close'].iloc[-1],
-            mode='lines',
-            name='Forecast',
-            line=dict(color='red', width=2),
+            y=forecast.cumsum() + stock_data["Close"].iloc[-1],
+            mode="lines",
+            name="Forecast",
+            line=dict(color="red", width=2),
         )
     )
 
@@ -157,39 +158,130 @@ def generate_arima_forecast_timeseries(ticker):
     fig.add_trace(
         go.Scatter(
             x=forecast_dates,
-            y=conf_int[:, 0].cumsum() + stock_data['Close'].iloc[-1],
-            mode='lines',
-            line=dict(color='red', width=0),
-            showlegend=False
+            y=conf_int[:, 0].cumsum() + stock_data["Close"].iloc[-1],
+            mode="lines",
+            line=dict(color="red", width=0),
+            showlegend=False,
         )
     )
 
     fig.add_trace(
         go.Scatter(
             x=forecast_dates,
-            y=conf_int[:, 1].cumsum() + stock_data['Close'].iloc[-1],
-            mode='lines',
-            line=dict(color='red', width=0),
-            fill='tonexty',  # Fill between the two lines
-            fillcolor='rgba(255, 0, 0, 0.3)',  # Fill color with transparency
-            name='Confidence Interval',
-            showlegend=True
+            y=conf_int[:, 1].cumsum() + stock_data["Close"].iloc[-1],
+            mode="lines",
+            line=dict(color="red", width=0),
+            fill="tonexty",  # Fill between the two lines
+            fillcolor="rgba(255, 0, 0, 0.3)",  # Fill color with transparency
+            name="Confidence Interval",
+            showlegend=True,
         )
     )
 
     # Update layout
     fig.update_layout(
-        title=f'{ticker} Stock Price Forecast',
-        xaxis_title='Date',
-        yaxis_title='Price (US$)',
-        legend_title='Legend',
-        hovermode='x unified',
-        template='plotly_white',  # Use a clean white template
+        title=f"{ticker} Stock Price Forecast",
+        xaxis_title="Date",
+        yaxis_title="Price (US$)",
+        legend_title="Legend",
+        hovermode="x unified",
+        template="plotly_white",  # Use a clean white template
         margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
     )
 
     graphJSON = plotly.io.to_json(fig, pretty=True)
     return graphJSON
+
+
+@app.route("/api/news", methods=["POST"])
+def get_cleaned_news():
+    data = request.json
+    ticker_symbol = data.get("company")
+    # topics = "finance"
+    API_key = "wepcdviwg2zsakkku9cup9x3aua7gxia2790oc2k"
+    # def get_cleaned_news(ticker_symbol, topics, API_key, bullish_threshold=0.2, bearish_threshold=-0.2):
+    # Prepare the URL for the API request
+    # url = f"https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={ticker_symbol}&topics=finance&sort=LATEST&apikey=80C3L74YFIM1ZTMG"
+    url1 = f"https://stocknewsapi.com/api/v1/stat?&tickers={ticker_symbol}&date=last30days&page=1&token={API_key}"
+    url2 = f"https://stocknewsapi.com/api/v1?tickers={ticker_symbol}&items=3&page=1&token={API_key}"
+    # Make the API request and handle errors
+    try:
+        response = requests.get(url1)
+        if response.status_code == 200:
+            sentiment_data = response.json()
+        else:
+            print(f"Error: {response.status_code}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+        return None
+
+    try:
+        response = requests.get(url2)
+        if response.status_code == 200:
+            news_data = response.json()
+        else:
+            print(f"Error: {response.status_code}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+        return None
+
+    print(sentiment_data, "getttying thre keys !!!!!!!!!!!!!!!!!")
+    sentiment_score = sentiment_data["total"][ticker_symbol]["Sentiment Score"]
+
+    print(sentiment_data["total"][ticker_symbol]["Sentiment Score"])
+    # Extract required information
+    # news_len = int(data["i/tems"])
+    news_articles = news_data["data"]
+    req_field = ["title", "news_url", "text"]
+
+    cleaned_news = []
+    for i in range(3):
+        news = {j: news_articles[i][j] for j in req_field}
+        cleaned_news.append(news)
+
+    # Extract top 3 news articles
+    top_news = {}
+    for i in range(3):  # Ensure we don't go beyond the available articles
+        top_news[i + 1] = {j: cleaned_news[i][j] for j in ("title", "news_url", "text")}
+
+    # Print top news headlines with cleaned titles
+    print("======================= Top News ===============================")
+    for i, j in top_news.items():
+        title_cleaned = re.sub(r"\s*\(\s*NASDAQ:\w+\s*\)", "", j["title"])
+        print(
+            f"Headline - {i} \n {j['title']}\n Summary: \n {j['text']} \n Link: \n {j['news_url']}\n\n"
+        )
+
+    # Calculate the average overall sentiment score
+    # total_score = sum(item["overall_sentiment_score"] for item in cleaned_news)
+    # avg_score = total_score / news_len if news_len > 0 else 0
+
+    # Determine sentiment category based on average sentiment score
+    if sentiment_score < -0.5:
+        avg_sentiment_category = "Bearish"
+    elif sentiment_score > 0.5:
+        avg_sentiment_category = "Bullish"
+    else:
+        avg_sentiment_category = "Neutral"
+
+    print(
+        f"The average overall sentiment score is: {sentiment_score} ({avg_sentiment_category})"
+    )
+
+    # Preparing the dictionary to send to the front end
+    news_for_frontend = {
+        "top_news": top_news,
+        "average_sentiment_score": sentiment_score,
+        "avg_sentiment_category": avg_sentiment_category,  # Add sentiment category
+    }
+
+    return jsonify(news_for_frontend)
+
+
+# result = get_cleaned_news(ticker_symbol, topics, API_key) #############################
+# print(result) ################################
 
 
 @app.route("/api/stock-valuation", methods=["POST"])
@@ -305,12 +397,8 @@ def stock_valuation():
 
     # Cost of Debt
     try:
-        total_debt = (
-            # balance_sheet.loc["Short Long Term Debt"].iloc[0]+ #commennted because it got removed from yf balance sheet
-            balance_sheet.loc["Long Term Debt"].iloc[0]
-        )
-    except KeyError:
         total_debt = balance_sheet.loc["Long Term Debt"].iloc[0]
+    except KeyError:
         total_debt = balance_sheet.loc["Long Term Debt"].iloc[0]
     try:
         interest_expense = income_stmt.loc["Interest Expense"].iloc[0]
@@ -835,7 +923,11 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
 
     # Create a summary dictionary
     summary = {
-        "P/E Ratio": f'{info["trailingPE"]:.2f}' if "trailingPE" in info and info["trailingPE"] is not None else "N/A",
+        "P/E Ratio": (
+            f'{info["trailingPE"]:.2f}'
+            if "trailingPE" in info and info["trailingPE"] is not None
+            else "N/A"
+        ),
         "High": (
             f'$ {stock_data["High"].iloc[-1]:.2f}' if not stock_data.empty else "N/A"
         ),
@@ -876,7 +968,6 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
             else "N/A"
         ),
     }
-
     return summary
 
 

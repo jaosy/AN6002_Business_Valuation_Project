@@ -4,6 +4,7 @@ from keras.models import load_model
 from pmdarima import auto_arima
 import statsmodels.api as sm
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 import plotly as plotly
 from PIL import Image
 from io import BytesIO
@@ -73,6 +74,7 @@ def get_stock_data():
 
     # Generate plots
     plotJSON = generate_timeseries_plot(stock_data, company_name)
+    forecastPlotJSON = generate_arima_forecast_timeseries(ticker)
 
     # Get company basic info
     info = get_company_basic_info(ticker)
@@ -86,23 +88,21 @@ def get_stock_data():
             "info": info,
             "ticker_symbol": ticker,
             "plot": plotJSON,  # Return the HTML content
+            "forecast_plot": forecastPlotJSON,
             "summary_data": summary_data,
         }
     )
 
 
-@app.route("/api/arima-forecast", methods=["POST"])
-def forecast_stock():
-    data = request.json
-    ticker = data.get("company")
-
+# @app.route("/api/arima-forecast", methods=["POST"])
+def generate_arima_forecast_timeseries(ticker):
     print(f"\nFetching data for {ticker}...\n")
     stock_data = yf.download(ticker, start="2015-01-01", end="2024-01-01")
 
-    # Augmented Dickey-Fuller test to check if time series is statonary
-    result = sm.tsa.adfuller(stock_data["Close"])
-    print(f"ADF Statistic: {result[0]}")
-    print(f"p-value: {result[1]}")
+    # Augmented Dickey-Fuller test to check if time series is stationary
+    result = sm.tsa.adfuller(stock_data['Close'])
+    print(f'ADF Statistic: {result[0]}')
+    print(f'p-value: {result[1]}')
 
     stock_diff = stock_data["Close"].diff().dropna()
     arima_model = auto_arima(stock_diff, seasonal=False, trace=True, stepwise=True)
@@ -112,18 +112,74 @@ def forecast_stock():
     forecast, conf_int = arima_model.predict(n_periods=n_periods, return_conf_int=True)
     forecast_dates = pd.date_range(stock_data.index[-1], periods=n_periods, freq="B")
 
-    print(forecast.cumsum() + stock_data["Close"].iloc[-1])
+    # Create a Plotly figure
+    fig = go.Figure()
 
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(stock_data.index, stock_data['Close'], label=f'{ticker} Stock Price')
-    # plt.plot(forecast_dates, forecast.cumsum() + stock_data['Close'].iloc[-1], label='Forecast', color='red')
-    # plt.fill_between(forecast_dates,
-    #                 conf_int[:, 0].cumsum() + stock_data['Close'].iloc[-1],
-    #                 conf_int[:, 1].cumsum() + stock_data['Close'].iloc[-1],
-    #                 color='red', alpha=0.3)
-    # plt.title(f'{ticker} Stock Price Forecast')
-    # plt.legend()
-    # plt.show()
+    # Add historical stock prices
+    fig.add_trace(
+        go.Scatter(
+            x=stock_data.index,
+            y=stock_data['Close'],
+            mode='lines',
+            name=f'{ticker} Stock Price',
+            line=dict(color='green', width=2),
+            hoverinfo='text',
+            hovertext=stock_data['Close'].apply(lambda x: f"Price: ${x:.2f}"),
+        )
+    )
+
+    # Add forecast line
+    fig.add_trace(
+        go.Scatter(
+            x=forecast_dates,
+            y=forecast.cumsum() + stock_data['Close'].iloc[-1],
+            mode='lines',
+            name='Forecast',
+            line=dict(color='red', width=2),
+        )
+    )
+
+    # Add confidence interval fill
+    fig.add_trace(
+        go.Scatter(
+            x=forecast_dates,
+            y=conf_int[:, 0].cumsum() + stock_data['Close'].iloc[-1],
+            mode='lines',
+            line=dict(color='red', width=0),
+            showlegend=False
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=forecast_dates,
+            y=conf_int[:, 1].cumsum() + stock_data['Close'].iloc[-1],
+            mode='lines',
+            line=dict(color='red', width=0),
+            fill='tonexty',  # Fill between the two lines
+            fillcolor='rgba(255, 0, 0, 0.3)',  # Fill color with transparency
+            name='Confidence Interval',
+            showlegend=True
+        )
+    )
+
+    # Update layout
+    fig.update_layout(
+        title=f'{ticker} Stock Price Forecast',
+        xaxis_title='Date',
+        yaxis_title='Price (US$)',
+        legend_title='Legend',
+        hovermode='x unified',
+        template='plotly_white',  # Use a clean white template
+        margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
+    )
+
+    graphJSON = plotly.io.to_json(fig, pretty=True)
+    return graphJSON
+
+
+
+
 
 
 @app.route("/api/stock-valuation", methods=["POST"])
@@ -443,6 +499,23 @@ def get_ticker(company_name):
     return company_code
 
 
+# def get_company_logo(company_domain):
+#     # Using Clearbit's logo API to get the company logo
+#     logo_url = f"https://logo.clearbit.com/{company_domain}"
+
+#     try:
+#         response = requests.get(logo_url)
+#         response.raise_for_status()
+
+#         # Open the image and display it
+#         img = Image.open(BytesIO(response.content))
+#         img.show()
+#         return img
+#     except Exception as e:
+#         print(f"Could not retrieve logo for {company_domain}: {e}")
+#         return None
+
+
 def get_company_basic_info(ticker):
     stock = yf.Ticker(ticker)
 
@@ -596,7 +669,7 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
 
     # Create a summary dictionary
     summary = {
-        "P/E Ratio": f'{info.get("trailingPE", "N/A"):.2f}',
+        "P/E Ratio": f'{info["trailingPE"]:.2f}' if "trailingPE" in info and info["trailingPE"] is not None else "N/A",
         "High": (
             f'$ {stock_data["High"].iloc[-1]:.2f}' if not stock_data.empty else "N/A"
         ),

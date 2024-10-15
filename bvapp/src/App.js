@@ -247,10 +247,6 @@ function App() {
                   Equity Value (Millions):{" "}
                   {stockValuation["Equity Value (Millions)"]}
                 </li>
-                <li>
-                  Intrinsic Value per Share:{" "}
-                  {stockValuation["Intrinsic Value per Share"]}
-                </li>
               </ul>
             </div>
           )}

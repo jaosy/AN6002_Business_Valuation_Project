@@ -62,20 +62,26 @@ def get_stock_data():
 
     time_period = valid_time_periods[data.get("time_period")]
 
-    if model:
-        ticker_to_predict = "AAPL"
-        predicted_price = predict_stock_price_combined_model(ticker_to_predict, model)
-        if predicted_price:
-            print(f"Predicted stock price for {ticker_to_predict}: {predicted_price}")
+    industry_name = sp500Json[ticker]['GICS Sector']
 
+    # get other companies in the same industry for basket comparison
+    companies_in_industry = []
+
+    for ticker in sp500Json:
+        if sp500Json[ticker]['GICS Sector'] == industry_name:
+            print(ticker)
+            companies_in_industry.append((ticker, sp500Json[ticker]['Security']))
+
+    ticker = data.get("company")
     time_period = valid_time_periods[data.get("time_period")]
     # Fetch stock data
+
     stock_data = yf.Ticker(ticker).history(period=time_period)
 
     # Generate plots
     plotJSON = generate_timeseries_plot(stock_data, company_name)
     forecastPlotJSON = generate_arima_forecast_timeseries(ticker)
-    generate_industry_plot()
+    generate_industry_plot(companies_in_industry, industry_name, ticker)
 
     # Get company basic info
     info = get_company_basic_info(ticker)
@@ -464,8 +470,7 @@ def stock_valuation():
         "Sector": sector,
         "Enterprise Value (Millions)": f"$ {enterprise_value_millions:.2f} mil",
         "Net Debt (Millions)": f"$ {net_debt_millions:.2f} mil",
-        "Equity Value (Millions)": f" $ {equity_value_millions:.2f} mil",
-        "Intrinsic Value per Share": f" $ {intrinsic_value_per_share:.2f}",
+        "Equity Value (Millions)": f" $ {equity_value_millions:.2f} mil"
     }
 
     return jsonify(data)
@@ -478,11 +483,6 @@ def get_company_logo(company_domain):
     try:
         response = requests.get(logo_url)
         response.raise_for_status()
-
-        # Open the image and display it
-        # img = Image.open(BytesIO(response.content))
-        # # img.show()
-
         return logo_url
     except Exception as e:
         print(f"Could not retrieve logo for {company_domain}: {e}")
@@ -491,7 +491,6 @@ def get_company_logo(company_domain):
 
 """Calculate and display an industry summary based on all the companies in the industry."""
 def generate_industry_plot(companies, industry, chosen_company):
-    print(chosen_company)
     pe_ratios = []
     market_caps = []
 
@@ -518,9 +517,6 @@ def generate_industry_plot(companies, industry, chosen_company):
     sorted_companies, sorted_pe_ratios = zip(*sorted_data)
 
     # Create a list of colors, highlighting the chosen company
-    print(sorted_companies)
-    print(chosen_company)
-    print(name == chosen_company)
     colors = ['orange' if ticker == chosen_company else 'skyblue' for ticker, name in sorted_companies]
 
     # Create a Plotly figure

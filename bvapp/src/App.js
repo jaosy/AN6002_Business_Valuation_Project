@@ -80,7 +80,7 @@ function App() {
         return "A company's total debt minus any cash and cash equivalents it has on hand.";
       case "Equity Value":
         return 'The value of the company available to its shareholders (total assets minus total liabilities). Often referred to as "market cap" for publicly traded companies.';
-      case "Audited Risk":
+      case "Audit Risk":
         return "This assesses the quality of the company’s financial reporting and internal controls, focusing on whether audits are conducted thoroughly and transparently.";
       case "Board Risk":
         return "This evaluates the structure and effectiveness of the board of directors, including its independence, diversity, and oversight.";
@@ -300,15 +300,30 @@ function App() {
                 <div style={styles.resultColumn}>
                   <div style={styles.infoContainer}>
                     <h3 style={styles.infoHeader}>Company Info</h3>
-                    {stockData["info"]["Company Logo"] && (
-                      <div style={styles.logoContainer}>
-                        <img
-                          src={stockData["info"]["Company Logo"]}
-                          alt="Company Logo"
-                          style={styles.logo}
-                        />
-                      </div>
-                    )}
+                    <div style={styles.logoAndMapContainer}>
+                      {stockData["info"]["Company Logo"] && (
+                        <div style={styles.logoContainer}>
+                          <img
+                            src={stockData["info"]["Company Logo"]}
+                            alt="Company Logo"
+                            style={styles.logo}
+                          />
+                        </div>
+                      )}
+                      {stockData.info["Address"].includes("United States") && (
+                        <div style={styles.mapContainer}>
+                          <GeoChart
+                            state={
+                              stockData.info["Address"]
+                                .split(",")[2]
+                                .trim()
+                                .split(" ")
+                                .slice(-2, -1)[0]
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
                     <ul style={styles.list}>
                       {orderedKeys.map(
                         (key) =>
@@ -319,20 +334,11 @@ function App() {
                               data-tooltip-id="tooltip" // Link this element to the Tooltip component
                               data-tooltip-content={getTooltipForKey(key)}
                             >
-                              {key}: {stockData.info[key]}
+                              <strong>{key}</strong>: {stockData.info[key]}
                             </li>
                           )
                       )}
                     </ul>
-                    <GeoChart
-                      state={
-                        stockData.info["Address"]
-                          .split(",")[2]
-                          .trim()
-                          .split(" ")
-                          .slice(-2, -1)[0]
-                      }
-                    />
                   </div>
 
                   <div style={styles.infoContainer}>
@@ -346,7 +352,7 @@ function App() {
                             data-tooltip-id="tooltip" // Link this element to the Tooltip component
                             data-tooltip-content={getTooltipForKey(key)}
                           >
-                            {key}: {value}
+                            <strong>{key}</strong>: {value}
                           </li>
                         )
                       )}
@@ -373,10 +379,11 @@ function App() {
                       <h3 style={styles.infoHeader}>Valuation Details</h3>
                       <ul style={styles.list}>
                         <li style={styles.listItem}>
-                          Company Name: {stockValuation["Company Name"]}
+                          <strong>Company Name</strong>:{" "}
+                          {stockValuation["Company Name"]}
                         </li>
                         <li style={styles.listItem}>
-                          Sector: {stockValuation.Sector}
+                          <strong>Sector</strong>: {stockValuation.Sector}
                         </li>
                         <li
                           style={styles.listItem}
@@ -385,7 +392,7 @@ function App() {
                             "Enterprise Value"
                           )}
                         >
-                          Enterprise Value (Millions):{" "}
+                          <strong>Enterprise Value (Millions)</strong>:{" "}
                           {stockValuation["Enterprise Value (Millions)"]}
                         </li>
                         <li
@@ -393,7 +400,7 @@ function App() {
                           data-tooltip-id="tooltip"
                           data-tooltip-content={getTooltipForKey("Net Debt")}
                         >
-                          Net Debt (Millions):{" "}
+                          <strong>Net Debt (Millions)</strong>:{" "}
                           {stockValuation["Net Debt (Millions)"]}
                         </li>
                         <li
@@ -403,7 +410,7 @@ function App() {
                             "Equity Value"
                           )}
                         >
-                          Equity Value (Millions):{" "}
+                          <strong>Equity Value (Millions)</strong>:{" "}
                           {stockValuation["Equity Value (Millions)"]}
                         </li>
                         <Tooltip
@@ -548,6 +555,7 @@ const styles = {
     marginBottom: "20px",
   },
   newsContainer: {
+    marginTop: "20px",
     marginBottom: "20px",
   },
   newsSentimentOverview: {
@@ -652,6 +660,23 @@ const styles = {
     bottom: 0,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     zIndex: 1000,
+  },
+  logoAndMapContainer: {
+    display: "flex",
+    justifyContent: "center", // Changed from 'space-between' to 'center'
+    alignItems: "center",
+    marginBottom: "20px",
+    gap: "20px", // This adds space between the logo and map
+  },
+  logoContainer: {
+    flex: "0 0 auto", // This allows the container to shrink to fit its content
+  },
+  mapContainer: {
+    flex: "0 0 auto", // This allows the container to shrink to fit its content
+  },
+  logo: {
+    maxWidth: "150px", // Adjust this value as needed
+    height: "auto",
   },
 };
 

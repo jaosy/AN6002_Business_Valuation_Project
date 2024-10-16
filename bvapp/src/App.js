@@ -246,8 +246,8 @@ function App() {
     <div style={styles.app}>
       <div style={styles.headerContainer}>
         <h1 style={styles.header}>
-          <span style={styles.headerText}>Stock Data</span>
-          <span style={styles.headerHighlight}>Viewer</span>
+          <span style={styles.headerText}>Esti</span>
+          <span style={styles.headerHighlight}>Mate</span>
         </h1>
       </div>
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -588,7 +588,20 @@ function App() {
       <MarqueeContainer>
         <MarqueeContent>
           <span>AN6002 Group 9</span>
-          <span>AN6002 Group 9</span>
+          <span>{stockData && stockData["company"]} </span>
+          <span>
+            {"Current Price: "}
+            {stockData && stockData["summary_data"]["Current Price"]}{" "}
+          </span>
+          <span>
+            {news &&
+              (news.avg_sentiment_category == "Bullish"
+                ? news.avg_sentiment_category + "👍"
+                : news.avg_sentiment_category)}
+          </span>
+          <span>
+            <img url="https://a.pinatafarm.com/1702x1280/5a102e3225/stonks.jpg"></img>
+          </span>
         </MarqueeContent>
       </MarqueeContainer>
     </div>
@@ -743,6 +756,7 @@ const styles = {
     justifyContent: "space-between",
   },
   resultColumn: {
+    padding: "20px",
     flex: "0 0 48%",
   },
   plotsContainer: {
@@ -853,7 +867,6 @@ const styles = {
     fontSize: "48px",
     fontWeight: "bold",
     textAlign: "center",
-    textTransform: "uppercase",
     letterSpacing: "2px",
     textShadow: "2px 2px 4px rgba(0, 0, 0, 0.25)",
     fontFamily: '"Montserrat", "Helvetica Neue", Arial, sans-serif',
@@ -863,16 +876,20 @@ const styles = {
     overflow: "hidden",
   },
   headerText: {
-    display: "inline-block",
     position: "relative",
     zIndex: 1,
   },
   headerHighlight: {
-    display: "inline-block",
     position: "relative",
-    color: "#ffffff",
-    marginLeft: "15px",
+    marginLeft: "0",
     zIndex: 1,
+    background: "linear-gradient(45deg, #e0f7ff, #ffffff)",
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+    color: "transparent",
+    textShadow: "none",
+    padding: "0 10px",
+    borderRadius: "5px",
     "&::after": {
       content: '""',
       position: "absolute",
@@ -883,6 +900,18 @@ const styles = {
       background: "rgba(255, 255, 255, 0.4)",
       zIndex: -1,
       transform: "skew(-20deg) rotate(-1deg)",
+    },
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background:
+        "linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.5))",
+      filter: "blur(5px)",
+      zIndex: -1,
     },
   },
   marqueeContainer: {

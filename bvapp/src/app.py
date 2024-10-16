@@ -783,9 +783,12 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
         ),
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 65120464a4e9d4acf6737be9c3891b881deeee85
+=======
+>>>>>>> f83e22319d2efd40c10b2a0594b7828b0ca46047
     return summary
 
 

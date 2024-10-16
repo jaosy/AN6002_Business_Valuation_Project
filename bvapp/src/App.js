@@ -47,32 +47,6 @@ function App() {
     "Overall Risk",
   ];
 
-  const test = async (e) => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/news", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          industry,
-          company,
-          time_period: timePeriod,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error fetching stock data");
-      }
-
-      const data = await response.json();
-      console.log(data);
-      setNews(data);
-      setLoading(false);
-    } catch (e) {}
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -100,6 +74,26 @@ function App() {
       setForecastPlot(JSON.parse(data["forecast_plot"]));
       setIndustryPEPlot(JSON.parse(data["industry_plot"]));
       setStockDataPlot(JSON.parse(data["plot"]));
+
+      // news
+      const newsResponse = await fetch("/api/news", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          industry,
+          company,
+          time_period: timePeriod,
+        }),
+      });
+
+      if (!newsResponse.ok) {
+        throw new Error("Error fetching stock data");
+      }
+
+      const newsData = await newsResponse.json();
+      setNews(newsData);
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -202,21 +196,6 @@ function App() {
           Get Data
         </button>
       </form>
-
-      <button
-        variant="contained"
-        color="primary"
-        type="submit"
-        onClick={() => test()}
-        disabled={timePeriod === "" || industry === "" || company === ""}
-        style={
-          timePeriod === "" || industry === "" || company === ""
-            ? styles.buttonDisabled
-            : styles.button
-        }
-      >
-        Get News
-      </button>
 
       {loading && (
         <div style={styles.loader}>

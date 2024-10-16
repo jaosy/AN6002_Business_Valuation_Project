@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/432998ae-3ec9-4b54-b104-50f4f3aad08c)# AN6002 Business Valuation Project: EstiMate
+# AN6002 Business Valuation Project: EstiMate
 
 ![image](https://github.com/user-attachments/assets/92045d61-2a50-48f3-b641-a32ce8626d43)
 ![image](https://github.com/user-attachments/assets/288ecd0d-ad4d-45f0-9a50-f269278b1462)

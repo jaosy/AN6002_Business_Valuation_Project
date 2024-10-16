@@ -313,7 +313,12 @@ function App() {
                       {orderedKeys.map(
                         (key) =>
                           stockData.info[key] !== undefined && (
-                            <li key={key} style={styles.listItem}>
+                            <li
+                              key={key}
+                              style={styles.listItem}
+                              data-tooltip-id="tooltip" // Link this element to the Tooltip component
+                              data-tooltip-content={getTooltipForKey(key)}
+                            >
                               {key}: {stockData.info[key]}
                             </li>
                           )

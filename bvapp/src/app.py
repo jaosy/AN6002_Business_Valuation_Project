@@ -196,7 +196,7 @@ def get_cleaned_news():
     data = request.json
     ticker_symbol = data.get("company")
     # topics = "finance"
-    API_key = "wepcdviwg2zsakkku9cup9x3aua7gxia2790oc2k"
+    API_key = "a"
     # def get_cleaned_news(ticker_symbol, topics, API_key, bullish_threshold=0.2, bearish_threshold=-0.2):
     # Prepare the URL for the API request
     # url = f"https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={ticker_symbol}&topics=finance&sort=LATEST&apikey=80C3L74YFIM1ZTMG"

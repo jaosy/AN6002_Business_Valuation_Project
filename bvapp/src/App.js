@@ -4,6 +4,41 @@ import { BounceLoader } from "react-spinners";
 import sp500Json from "./sp500_tickers.json";
 import GeoChart from "./map.js";
 import { Tooltip } from "react-tooltip";
+import styled, { keyframes } from "styled-components";
+
+const marqueeAnimation = keyframes`
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+`;
+
+const MarqueeContainer = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #74c0ff, #2a70c8);
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+`;
+
+const MarqueeContent = styled.div`
+  display: inline-block;
+  white-space: nowrap;
+  animation: ${marqueeAnimation} 20s linear infinite;
+
+  span {
+    display: inline-block;
+    padding: 0 50px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+`;
 
 const industries = [
   ...new Set(
@@ -172,16 +207,56 @@ function App() {
     }
   };
 
+  const getRiskGradient = (riskValue) => {
+    if (riskValue <= 3) {
+      return {
+        background: "linear-gradient(45deg, #28a745, #d4edda)",
+        color: "#155724",
+      };
+    } else if (riskValue <= 7) {
+      return {
+        background: "linear-gradient(45deg, #007bff, #cce5ff)",
+        color: "#004085",
+      };
+    } else {
+      return {
+        background: "linear-gradient(45deg, #dc3545, #f8d7da)",
+        color: "#721c24",
+      };
+    }
+  };
+
+  const getRiskContainerStyle = (riskValue) => {
+    const gradientStyle = getRiskGradient(riskValue);
+    return {
+      ...styles.overallRiskContainer,
+      ...gradientStyle,
+    };
+  };
+
+  const getRiskValueContainerStyle = (riskValue) => {
+    const gradientStyle = getRiskGradient(riskValue);
+    return {
+      ...styles.overallRiskValueContainer,
+      background: gradientStyle.background,
+    };
+  };
+
   return (
     <div style={styles.app}>
-      <h1 style={styles.header}>Stock Data Viewer</h1>
+      <div style={styles.headerContainer}>
+        <h1 style={styles.header}>
+          <span style={styles.headerText}>Stock Data</span>
+          <span style={styles.headerHighlight}>Viewer</span>
+        </h1>
+      </div>
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
           <label
             style={styles.label}
             data-tip="Choose a company from the selected industry."
           >
-            Industry:
+            Industry
           </label>
           <select
             value={industry}
@@ -202,7 +277,7 @@ function App() {
           </select>
         </div>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Company:</label>
+          <label style={styles.label}>Company</label>
           <select
             value={company}
             onChange={(e) => {
@@ -224,7 +299,7 @@ function App() {
           </select>
         </div>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Time Period:</label>
+          <label style={styles.label}>Time Period</label>
           <select
             value={timePeriod}
             onChange={(e) => {
@@ -251,7 +326,7 @@ function App() {
               : styles.button
           }
         >
-          Get Data
+          Valuate Me
         </button>
       </form>
 
@@ -325,18 +400,44 @@ function App() {
                       )}
                     </div>
                     <ul style={styles.list}>
-                      {orderedKeys.map(
-                        (key) =>
-                          stockData.info[key] !== undefined && (
-                            <li
-                              key={key}
-                              style={styles.listItem}
-                              data-tooltip-id="tooltip" // Link this element to the Tooltip component
-                              data-tooltip-content={getTooltipForKey(key)}
-                            >
-                              <strong>{key}</strong>: {stockData.info[key]}
-                            </li>
-                          )
+                      {orderedKeys.map((key) =>
+                        stockData.info[key] !== undefined ? (
+                          <li
+                            key={key}
+                            style={
+                              key === "Overall Risk"
+                                ? styles.overallRiskItem
+                                : styles.listItem
+                            }
+                            data-tooltip-id="tooltip"
+                            data-tooltip-content={getTooltipForKey(key)}
+                          >
+                            {key === "Overall Risk" ? (
+                              <div
+                                style={getRiskContainerStyle(
+                                  parseFloat(stockData.info[key])
+                                )}
+                              >
+                                <strong style={styles.overallRiskLabel}>
+                                  {key}
+                                </strong>
+                                <div
+                                  style={getRiskValueContainerStyle(
+                                    parseFloat(stockData.info[key])
+                                  )}
+                                >
+                                  <span style={styles.overallRiskValue}>
+                                    {stockData.info[key]}
+                                  </span>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <strong>{key}</strong>: {stockData.info[key]}
+                              </>
+                            )}
+                          </li>
+                        ) : null
                       )}
                     </ul>
                   </div>
@@ -484,6 +585,12 @@ function App() {
           )}
         </div>
       </div>
+      <MarqueeContainer>
+        <MarqueeContent>
+          <span>AN6002 Group 9</span>
+          <span>AN6002 Group 9</span>
+        </MarqueeContent>
+      </MarqueeContainer>
     </div>
   );
 }
@@ -492,7 +599,6 @@ const styles = {
   app: {
     fontFamily: "Arial, sans-serif",
     margin: "0 auto",
-    padding: "20px",
     maxWidth: "100%",
   },
   header: {
@@ -504,46 +610,67 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginBottom: "20px",
+    gap: "20px",
+    maxWidth: "400px",
+    margin: "0 auto",
+    padding: "30px",
+    borderRadius: "10px",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    backgroundColor: "#f8f9fa",
   },
   formGroup: {
-    marginBottom: "15px",
     width: "100%",
-    maxWidth: "400px",
   },
   label: {
     display: "block",
-    marginBottom: "5px",
+    marginBottom: "8px",
+    fontSize: "16px",
     fontWeight: "bold",
+    color: "#495057",
+    textTransform: "uppercase",
+    letterSpacing: "1px",
   },
   select: {
     width: "100%",
-    padding: "10px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
+    padding: "12px",
     fontSize: "16px",
+    borderRadius: "5px",
+    border: "1px solid #ced4da",
+    backgroundColor: "#fff",
+    transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
+    "&:focus": {
+      borderColor: "#80bdff",
+      outline: 0,
+      boxShadow: "0 0 0 0.2rem rgba(0, 123, 255, 0.25)",
+    },
   },
   button: {
-    margin: "0.5em",
-    padding: "10px 20px",
-    borderRadius: "4px",
-    border: "none",
-    backgroundColor: "#007bff",
+    padding: "12px 24px",
+    fontSize: "18px",
+    fontWeight: "bold",
     color: "#fff",
-    fontSize: "16px",
+    backgroundColor: "#007bff",
+    border: "none",
+    borderRadius: "5px",
     cursor: "pointer",
-    transition: "background-color 0.3s",
+    transition: "all 0.3s ease",
+    background: "linear-gradient(45deg, #007bff, #0056b3)",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    "&:hover": {
+      background: "linear-gradient(45deg, #0056b3, #004085)",
+      boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+    },
   },
   buttonDisabled: {
-    margin: "0.5em",
-    padding: "10px 20px",
-    borderRadius: "4px",
+    padding: "12px 24px",
+    fontSize: "18px",
+    fontWeight: "bold",
+    color: "#6c757d",
+    backgroundColor: "#e9ecef",
     border: "none",
-    color: "#fff",
-    fontSize: "16px",
-    transition: "background-color 0.3s",
-    backgroundColor: "#ccc",
+    borderRadius: "5px",
     cursor: "not-allowed",
+    boxShadow: "none",
   },
   contentContainer: {
     display: "flex",
@@ -635,6 +762,8 @@ const styles = {
     boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
   },
   infoHeader: {
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: "10px",
     fontSize: "18px",
     fontWeight: "bold",
@@ -677,6 +806,106 @@ const styles = {
   logo: {
     maxWidth: "150px", // Adjust this value as needed
     height: "auto",
+  },
+  overallRiskItem: {
+    marginBottom: "20px",
+    listStyleType: "none",
+  },
+  overallRiskContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "20px",
+    borderRadius: "10px",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+  },
+  overallRiskLabel: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    marginBottom: "10px",
+    fontFamily: "Arial, sans-serif",
+  },
+  overallRiskValueContainer: {
+    borderRadius: "50%",
+    width: "120px",
+    height: "120px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+  },
+  overallRiskValue: {
+    fontSize: "48px",
+    fontWeight: "bold",
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    color: "white",
+    textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+  },
+  headerContainer: {
+    background: "linear-gradient(135deg, #74c0fc, #2b6cb0)",
+    padding: "30px 0",
+    borderRadius: "0 0 50% 50% / 20px",
+    boxShadow: "0 5px 15px rgba(0, 0, 0, 0.15)",
+    marginBottom: "40px",
+  },
+  header: {
+    color: "#ffffff",
+    fontSize: "48px",
+    fontWeight: "bold",
+    textAlign: "center",
+    textTransform: "uppercase",
+    letterSpacing: "2px",
+    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.25)",
+    fontFamily: '"Montserrat", "Helvetica Neue", Arial, sans-serif',
+    margin: 0,
+    padding: "0",
+    position: "relative",
+    overflow: "hidden",
+  },
+  headerText: {
+    display: "inline-block",
+    position: "relative",
+    zIndex: 1,
+  },
+  headerHighlight: {
+    display: "inline-block",
+    position: "relative",
+    color: "#ffffff",
+    marginLeft: "15px",
+    zIndex: 1,
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: "5px",
+      height: "10px",
+      background: "rgba(255, 255, 255, 0.4)",
+      zIndex: -1,
+      transform: "skew(-20deg) rotate(-1deg)",
+    },
+  },
+  marqueeContainer: {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    overflow: "hidden",
+    background: "linear-gradient(135deg, #74c0ff, #2a70c8)",
+    padding: "10px 0",
+    boxShadow: "0 -2px 5px rgba(0, 0, 0, 0.1)",
+  },
+  marquee: {
+    display: "inline-block",
+    whiteSpace: "nowrap",
+    animation: "marquee 20s linear infinite",
+    "& span": {
+      display: "inline-block",
+      padding: "0 50px",
+      fontSize: "18px",
+      fontWeight: "bold",
+      color: "#ffffff",
+    },
   },
 };
 

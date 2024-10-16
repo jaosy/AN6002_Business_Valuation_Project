@@ -42,14 +42,13 @@ valid_time_periods = {
 
 @app.route("/api/sp500_tickers", methods=["GET"])
 def get_sp500_tickers():
-    # Fetch S&P 500 constituents from Wikipedia
     url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     tables = pd.read_html(url)
     df = tables[0]  # The first table contains the S&P 500 data
-    df = df[["Symbol", "GICS Sector", "Security"]]  # Select relevant columns
+    df = df[["Symbol", "GICS Sector", "Security"]]  # Select relevant columns - these are ticker, industry and company name
     tickers_data = df.set_index("Symbol")[["GICS Sector", "Security"]].to_dict(
         orient="index"
-    )  # Create a dictionary of tickers, sectors, and company names
+    )
     return jsonify(tickers_data)
 
 
@@ -68,9 +67,7 @@ def get_stock_data():
     # Get company summary metrics
     summary_data = get_company_summary(ticker, company_name, time_period)
 
-
     industry_name = sp500Json[ticker]['GICS Sector']
-
 
     # get other companies in the same industry for basket comparison
     companies_in_industry = []
@@ -82,8 +79,8 @@ def get_stock_data():
 
     ticker = data.get("company")
     time_period = valid_time_periods[data.get("time_period")]
+    
     # Fetch stock data
-
     stock_data = yf.Ticker(ticker).history(period=time_period)
 
     # Generate plots
@@ -97,7 +94,7 @@ def get_stock_data():
         "info": info,
         "ticker_symbol": ticker,
         "summary_data": summary_data,
-        "plot": plotJSON,  # Return the HTML content
+        "plot": plotJSON,
         "forecast_plot": forecastPlotJSON,
         "summary_data": summary_data,
         "monetary_plot": company_bar_chartsJSON,
@@ -120,12 +117,10 @@ def generate_arima_forecast_timeseries(ticker):
     stock_diff = stock_data["Close"].diff().dropna()
     arima_model = auto_arima(stock_diff, seasonal=False, trace=True, stepwise=True)
 
-    # Forecast 30 business days
     n_periods = 30
     forecast, conf_int = arima_model.predict(n_periods=n_periods, return_conf_int=True)
     forecast_dates = pd.date_range(stock_data.index[-1], periods=n_periods, freq="B")
 
-    # Create a Plotly figure
     fig = go.Figure()
 
     # Add historical stock prices
@@ -169,8 +164,8 @@ def generate_arima_forecast_timeseries(ticker):
             y=conf_int[:, 1].cumsum() + stock_data["Close"].iloc[-1],
             mode="lines",
             line=dict(color="red", width=0),
-            fill="tonexty",  # Fill between the two lines
-            fillcolor="rgba(255, 0, 0, 0.3)",  # Fill color with transparency
+            fill="tonexty",
+            fillcolor="rgba(255, 0, 0, 0.3)",
             name="Confidence Interval",
             showlegend=True,
         )
@@ -183,26 +178,26 @@ def generate_arima_forecast_timeseries(ticker):
         yaxis_title="Price (US$)",
         legend_title="Legend",
         hovermode="x unified",
-        template="plotly_white",  # Use a clean white template
-        margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
+        template="plotly_white",
+        margin=dict(l=40, r=40, t=40, b=40),
     )
 
     graphJSON = plotly.io.to_json(fig, pretty=True)
     return graphJSON
 
 
+"""
+Get news from AlphaVantage API; API key may be invalid after October 16 2024
+"""
 @app.route("/api/news", methods=["POST"])
 def get_cleaned_news():
     data = request.json
     ticker_symbol = data.get("company")
-    # topics = "finance"
+
     API_key = "wepcdviwg2zsakkku9cup9x3aua7gxia2790oc2k"
-    # def get_cleaned_news(ticker_symbol, topics, API_key, bullish_threshold=0.2, bearish_threshold=-0.2):
-    # Prepare the URL for the API request
-    # url = f"https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={ticker_symbol}&topics=finance&sort=LATEST&apikey=80C3L74YFIM1ZTMG"
     url1 = f"https://stocknewsapi.com/api/v1/stat?&tickers={ticker_symbol}&date=last30days&page=1&token={API_key}"
     url2 = f"https://stocknewsapi.com/api/v1?tickers={ticker_symbol}&items=3&page=1&token={API_key}"
-    # Make the API request and handle errors
+
     try:
         response = requests.get(url1)
         if response.status_code == 200:
@@ -229,8 +224,8 @@ def get_cleaned_news():
     sentiment_score = sentiment_data["total"][ticker_symbol]["Sentiment Score"]
 
     print(sentiment_data["total"][ticker_symbol]["Sentiment Score"])
+    
     # Extract required information
-    # news_len = int(data["i/tems"])
     news_articles = news_data["data"]
     req_field = ["title", "news_url", "text"]
 
@@ -278,19 +273,14 @@ def get_cleaned_news():
     return jsonify(news_for_frontend)
 
 
-# result = get_cleaned_news(ticker_symbol, topics, API_key) #############################
-# print(result) ################################
-
-
 @app.route("/api/stock-valuation", methods=["POST"])
 def stock_valuation():
     data = request.json
-    company = data.get("company")  # Get the company name from the request
+    company = data.get("company")
 
     if not company:
         return jsonify({"error": "Company name is required."}), 400
 
-    # Get the ticker symbol using the get_ticker function
     ticker_input = get_ticker(company)
     ticker = ticker_input.upper()
 
@@ -347,7 +337,7 @@ def stock_valuation():
         return (
             jsonify({"error": "EBITDA data not available."}),
             400,
-        )  # Exit the function
+        )
 
     # Check for zero or negative EBITDA
     if ebitda_values[-1] <= 0 or np.isnan(ebitda_values[-1]):
@@ -545,6 +535,7 @@ def stock_valuation():
     if shares_outstanding == 0:
         return jsonify({"error": "Shares outstanding not available."}), 400
 
+    # Decided to take this out before final
     intrinsic_value_per_share = dcf_value / shares_outstanding
 
     # Convert values to millions
@@ -576,9 +567,6 @@ def get_company_logo(company_domain):
     except Exception as e:
         print(f"Could not retrieve logo for {company_domain}: {e}")
         return None
-
-
-"""Calculate and display an industry summary based on all the companies in the industry."""
 
 
 def generate_industry_plot(companies, industry, chosen_company):
@@ -614,7 +602,6 @@ def generate_industry_plot(companies, industry, chosen_company):
         for ticker, name in sorted_companies
     ]
 
-    # Create a Plotly figure
     fig = go.Figure()
 
     # Add horizontal bar chart
@@ -627,7 +614,6 @@ def generate_industry_plot(companies, industry, chosen_company):
         )
     )
 
-    # Update layout for better formatting
     fig.update_layout(
         title=f"P/E Ratios of {industry} Companies",
         xaxis_title="P/E Ratio",
@@ -735,7 +721,6 @@ def predict_stock_price_combined_model(ticker, model, seq_length=60):
 
 
 def generate_timeseries_plot(df, chosen_company):
-    # Create a Plotly figure
     fig = go.Figure()
 
     # Add the closing price line
@@ -778,19 +763,18 @@ def generate_timeseries_plot(df, chosen_company):
             name="Min Price",
             marker=dict(color="red", size=10),
             text=[f"Min: ${min_value:.2f}<br>Date: {min_date.date()}"],
-            textposition="middle right",  # Adjusted position
+            textposition="middle right",
         )
     )
 
-    # Update layout with padding
     fig.update_layout(
         title=f"Stock Price for {chosen_company}",
         xaxis_title="Date",
         yaxis_title="Price (US$)",
         legend_title="Legend",
         hovermode="x unified",
-        template="plotly_white",  # Use a clean white template
-        margin=dict(l=40, r=40, t=40, b=40),  # Add margins to avoid cutting off text
+        template="plotly_white",
+        margin=dict(l=40, r=40, t=40, b=40),
     )
     fig.update_yaxes(automargin=True)
     fig.update_xaxes(automargin=True)
@@ -863,13 +847,12 @@ def generate_monetary_charts_1d(ticker_symbol, company_name):
         ],
     }
 
-    # Convert the data into a pandas DataFrame
     df = pd.DataFrame(data)
 
     # Create a new column 'Formatted Value' with the formatted values
     df["Formatted Value"] = df["Value"].apply(format_value)
 
-    # Create subplots
+    # Create subplots so all the interrim graphs are together
     fig = make_subplots(
         rows=2,
         cols=2,
@@ -886,7 +869,7 @@ def generate_monetary_charts_1d(ticker_symbol, company_name):
         horizontal_spacing=0.1,
     )
 
-    # Add table
+    # Add metrics table
     fig.add_trace(
         go.Table(
             header=dict(
@@ -969,7 +952,6 @@ def generate_monetary_charts_1d(ticker_symbol, company_name):
             col=1,
         )
 
-    # Update layout
     fig.update_layout(
         height=1000,
         width=1200,
@@ -977,11 +959,9 @@ def generate_monetary_charts_1d(ticker_symbol, company_name):
         showlegend=False,
     )
 
-    # Update y-axis labels
     fig.update_yaxes(title_text="Value in USD", row=1, col=2)
     fig.update_yaxes(title_text="Value in USD", row=2, col=1)
 
-    # Show the figure
     graphJSON = plotly.io.to_json(fig, pretty=True)
     return graphJSON
 
@@ -992,7 +972,6 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
     stock_data = company.history(period=str(time))
     info = company.info
 
-    # Create a summary dictionary
     summary = {
         "P/E Ratio": (
             f'{info["trailingPE"]:.2f}'
@@ -1042,7 +1021,6 @@ def get_company_summary(ticker_symbol, choosen_company, time="1d"):
     return summary
 
 
-# Function to format values
 def format_value(val):
     if isinstance(val, (int, float)):
         return f"{val:,.2f}"

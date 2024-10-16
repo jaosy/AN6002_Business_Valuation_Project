@@ -1,4 +1,3 @@
-// src/GeoChart.js
 import React, { useEffect } from "react";
 
 const GeoChart = ({ state }) => {
@@ -22,19 +21,19 @@ const GeoChart = ({ state }) => {
     const drawRegionsMap = () => {
       const stateFormatted = "US-" + state;
       const data = window.google.visualization.arrayToDataTable([
-        ["State", "Popularity"], // Column headers
-        [stateFormatted, 1], // Use the state abbreviation and a value (1 for highlighting)
+        ["State", "Popularity"],
+        [stateFormatted, 1],
       ]);
 
       const options = {
         region: "US", // Set the region to the entire US
         resolution: "provinces",
         colorAxis: {
-          colors: ["#e7f0f7", "#007bff"], // Gradient from light to dark blue
+          colors: ["#e7f0f7", "#007bff"],
         },
-        backgroundColor: "#f0f0f0", // Optional: Set background color
-        datalessRegionColor: "#f8f8f8", // Color for regions without data
-        defaultColor: "#f5f5f5", // Default color for regions
+        backgroundColor: "#f0f0f0",
+        datalessRegionColor: "#f8f8f8",
+        defaultColor: "#f5f5f5",
         legend: "none",
         height: 140,
       };

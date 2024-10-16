@@ -362,12 +362,12 @@ function App() {
                       <Plot
                         data={industryPEPlot.data}
                         layout={industryPEPlot.layout}
-                        style={styles.plot}
+                        style={styles.industryPlot}
                       />
                       <Plot
                         data={companyPlot.data}
                         layout={companyPlot.layout}
-                        style={styles.plot}
+                        style={styles.industryPlot}
                       />
                     </div>
                   </div>
@@ -450,7 +450,7 @@ function App() {
                           <li
                             key={key}
                             style={styles.listItem}
-                            data-tooltip-id="tooltip" // Link this element to the Tooltip component
+                            data-tooltip-id="tooltip"
                             data-tooltip-content={getTooltipForKey(key)}
                           >
                             <strong>{key}</strong>: {value}
@@ -463,13 +463,13 @@ function App() {
                         type="dark"
                         effect="solid"
                         style={{
-                          padding: "8px 12px", // Adds padding to the tooltip
-                          borderRadius: "4px", // Rounded corners
-                          fontSize: "20px", // Small font size
-                          maxWidth: "200px", // Max width to keep it box-like
-                          whiteSpace: "normal", // Allows the text to wrap inside the box
-                          textAlign: "center", // Center the text in the tooltip
-                          wordWrap: "break-word", // Ensures long words break correctly
+                          padding: "8px 12px",
+                          borderRadius: "4px",
+                          fontSize: "20px",
+                          maxWidth: "200px",
+                          whiteSpace: "normal",
+                          textAlign: "center",
+                          wordWrap: "break-word",
                         }}
                       />
                     </ul>
@@ -520,13 +520,13 @@ function App() {
                           type="dark"
                           effect="solid"
                           style={{
-                            padding: "8px 12px", // Adds padding to the tooltip
-                            borderRadius: "4px", // Rounded corners
-                            fontSize: "20px", // Small font size
-                            maxWidth: "200px", // Max width to keep it box-like
-                            whiteSpace: "normal", // Allows the text to wrap inside the box
-                            textAlign: "center", // Center the text in the tooltip
-                            wordWrap: "break-word", // Ensures long words break correctly
+                            padding: "8px 12px",
+                            borderRadius: "4px",
+                            fontSize: "20px",
+                            maxWidth: "200px",
+                            whiteSpace: "normal",
+                            textAlign: "center",
+                            wordWrap: "break-word",
                           }}
                         />
                       </ul>
@@ -687,7 +687,6 @@ const styles = {
   },
   contentContainer: {
     display: "flex",
-    justifyContent: "space-between",
     flexWrap: "wrap",
   },
   column: {
@@ -748,6 +747,7 @@ const styles = {
   },
   resultHeader: {
     marginBottom: "10px",
+    marginLeft: "30px",
     fontSize: "20px",
     fontWeight: "bold",
   },
@@ -756,17 +756,23 @@ const styles = {
     justifyContent: "space-between",
   },
   resultColumn: {
-    padding: "20px",
+    paddingLeft: "20px",
     flex: "0 0 48%",
   },
   plotsContainer: {
     whiteSpace: "nowrap",
+    maxWidth: "70%",
   },
   plotWrapper: {
     display: "inline-block",
   },
   plot: {
     marginBottom: "20px",
+  },
+  industryPlot: {
+    marginBottom: "20px",
+    maxWidth: "80%",
+    overflowX: "scroll",
   },
   infoContainer: {
     marginTop: "15px",
@@ -806,19 +812,19 @@ const styles = {
   },
   logoAndMapContainer: {
     display: "flex",
-    justifyContent: "center", // Changed from 'space-between' to 'center'
+    justifyContent: "center",
     alignItems: "center",
     marginBottom: "20px",
-    gap: "20px", // This adds space between the logo and map
+    gap: "20px",
   },
   logoContainer: {
-    flex: "0 0 auto", // This allows the container to shrink to fit its content
+    flex: "0 0 auto",
   },
   mapContainer: {
-    flex: "0 0 auto", // This allows the container to shrink to fit its content
+    flex: "0 0 auto",
   },
   logo: {
-    maxWidth: "150px", // Adjust this value as needed
+    maxWidth: "150px",
     height: "auto",
   },
   overallRiskItem: {
@@ -881,9 +887,11 @@ const styles = {
   },
   headerHighlight: {
     position: "relative",
-    marginLeft: "0",
     zIndex: 1,
-    background: "linear-gradient(45deg, #e0f7ff, #ffffff)",
+    display: "inline-block",
+    marginLeft: "0",
+    background:
+      "linear-gradient(45deg, #FFB3BA, #FFDFBA, #FFFFBA, #BAFFC9, #BAE1FF)",
     backgroundClip: "text",
     WebkitBackgroundClip: "text",
     color: "transparent",
@@ -909,7 +917,7 @@ const styles = {
       right: 0,
       bottom: 0,
       background:
-        "linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.5))",
+        "linear-gradient(45deg, rgba(255,179,186,0.3), rgba(255,223,186,0.3), rgba(255,255,186,0.3), rgba(186,255,201,0.3), rgba(186,225,255,0.3))",
       filter: "blur(5px)",
       zIndex: -1,
     },

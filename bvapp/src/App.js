@@ -171,6 +171,7 @@ function App() {
             onChange={(e) => {
               setTimePeriod(e.target.value);
               setStockData(null);
+              setNews(null);
             }}
             style={styles.select}
           >

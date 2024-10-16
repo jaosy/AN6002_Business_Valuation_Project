@@ -209,145 +209,160 @@ function App() {
 
       <div style={styles.contentContainer}>
         <div style={styles.column}>
-          {news && (
-            <div style={styles.newsContainer}>
-              <div style={styles.newsSentimentOverview}>
-                <h2 style={styles.newsHeader}>News Sentiment Overview</h2>
-                <p style={styles.newsSentimentText}>
-                  <span style={styles.newsSentimentLabel}>
-                    Sentiment Score:
-                  </span>
-                  <span style={styles.newsSentimentValue}>
-                    {news.average_sentiment_score}
-                  </span>
-                </p>
-                <p style={styles.newsSentimentText}>
-                  <span style={styles.newsSentimentLabel}>
-                    Sentiment Category:
-                  </span>
-                  <span style={styles.newsSentimentValue}>
-                    {news.avg_sentiment_category}
-                  </span>
-                </p>
-              </div>
-
-              {Object.keys(news.top_news).map((key) => (
-                <div key={key} style={styles.newsItem}>
-                  <h3 style={styles.newsTitle}>{news.top_news[key].title}</h3>
-                  <p style={styles.newsText}>{news.top_news[key].text}</p>
-                  <a
-                    href={news.top_news[key].news_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={styles.newsLink}
-                  >
-                    Read more &rarr;
-                  </a>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div style={styles.column}>
           {stockData && (
             <div style={styles.resultContainer}>
               <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
-              <div style={styles.plotsContainer}>
-                {timePeriod !== "1 day" && (
-                  <>
-                    <Plot
-                      data={stockDataPlot.data}
-                      layout={stockDataPlot.layout}
-                      style={styles.plot}
-                    />
-                    <Plot
-                      data={forecastPlot.data}
-                      layout={forecastPlot.layout}
-                      style={styles.plot}
-                    />
-                  </>
-                )}
-                <Plot
-                  data={industryPEPlot.data}
-                  layout={industryPEPlot.layout}
-                  style={styles.plot}
-                />
-                <Plot
-                  data={companyPlot.data}
-                  layout={companyPlot.layout}
-                  style={styles.plot}
-                />
-              </div>
-              <div style={styles.infoContainer}>
-                <h3 style={styles.infoHeader}>Summary Data</h3>
-                <ul style={styles.list}>
-                  {Object.entries(stockData.summary_data).map(
-                    ([key, value]) => (
-                      <li key={key} style={styles.listItem}>
-                        {key}: {value}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-              <div style={styles.infoContainer}>
-                <h3 style={styles.infoHeader}>Company Info</h3>
-                {stockData["info"]["Company Logo"] && (
-                  <div style={styles.logoContainer}>
-                    <img
-                      src={stockData["info"]["Company Logo"]}
-                      alt="Company Logo"
-                      style={styles.logo}
+              <div style={styles.resultColumns}>
+                <div style={styles.resultColumn}>
+                  <div style={styles.plotsContainer}>
+                    <div style={styles.plotWrapper}>
+                      {timePeriod !== "1 day" && (
+                        <>
+                          <Plot
+                            data={stockDataPlot.data}
+                            layout={stockDataPlot.layout}
+                            style={styles.plot}
+                          />
+                          <Plot
+                            data={forecastPlot.data}
+                            layout={forecastPlot.layout}
+                            style={styles.plot}
+                          />
+                        </>
+                      )}
+                      <Plot
+                        data={industryPEPlot.data}
+                        layout={industryPEPlot.layout}
+                        style={styles.plot}
+                      />
+                      <Plot
+                        data={companyPlot.data}
+                        layout={companyPlot.layout}
+                        style={styles.plot}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div style={styles.resultColumn}>
+                  <div style={styles.infoContainer}>
+                    <h3 style={styles.infoHeader}>Company Info</h3>
+                    {stockData["info"]["Company Logo"] && (
+                      <div style={styles.logoContainer}>
+                        <img
+                          src={stockData["info"]["Company Logo"]}
+                          alt="Company Logo"
+                          style={styles.logo}
+                        />
+                      </div>
+                    )}
+                    <ul style={styles.list}>
+                      {orderedKeys.map(
+                        (key) =>
+                          stockData.info[key] !== undefined && (
+                            <li key={key} style={styles.listItem}>
+                              {key}: {stockData.info[key]}
+                            </li>
+                          )
+                      )}
+                    </ul>
+                    <GeoChart
+                      state={
+                        stockData.info["Address"]
+                          .split(",")[2]
+                          .trim()
+                          .split(" ")
+                          .slice(-2, -1)[0]
+                      }
                     />
                   </div>
-                )}
-                <ul style={styles.list}>
-                  {orderedKeys.map(
-                    (key) =>
-                      stockData.info[key] !== undefined && (
-                        <li key={key} style={styles.listItem}>
-                          {key}: {stockData.info[key]}
-                        </li>
-                      )
-                  )}
-                </ul>
-                <GeoChart
-                  state={
-                    stockData.info["Address"]
-                      .split(",")[2]
-                      .trim()
-                      .split(" ")
-                      .slice(-2, -1)[0]
-                  }
-                />
-              </div>
 
-              {stockValuation && (
-                <div style={styles.infoContainer}>
-                  <h3 style={styles.infoHeader}>Valuation Details</h3>
-                  <ul style={styles.list}>
-                    <li style={styles.listItem}>
-                      Company Name: {stockValuation["Company Name"]}
-                    </li>
-                    <li style={styles.listItem}>
-                      Sector: {stockValuation.Sector}
-                    </li>
-                    <li style={styles.listItem}>
-                      Enterprise Value (Millions):{" "}
-                      {stockValuation["Enterprise Value (Millions)"]}
-                    </li>
-                    <li style={styles.listItem}>
-                      Net Debt (Millions):{" "}
-                      {stockValuation["Net Debt (Millions)"]}
-                    </li>
-                    <li style={styles.listItem}>
-                      Equity Value (Millions):{" "}
-                      {stockValuation["Equity Value (Millions)"]}
-                    </li>
-                  </ul>
+                  <div style={styles.infoContainer}>
+                    <h3 style={styles.infoHeader}>Summary Data</h3>
+                    <ul style={styles.list}>
+                      {Object.entries(stockData.summary_data).map(
+                        ([key, value]) => (
+                          <li key={key} style={styles.listItem}>
+                            {key}: {value}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+
+                  {stockValuation && (
+                    <div style={styles.infoContainer}>
+                      <h3 style={styles.infoHeader}>Valuation Details</h3>
+                      <ul style={styles.list}>
+                        <li style={styles.listItem}>
+                          Company Name: {stockValuation["Company Name"]}
+                        </li>
+                        <li style={styles.listItem}>
+                          Sector: {stockValuation.Sector}
+                        </li>
+                        <li style={styles.listItem}>
+                          Enterprise Value (Millions):{" "}
+                          {stockValuation["Enterprise Value (Millions)"]}
+                        </li>
+                        <li style={styles.listItem}>
+                          Net Debt (Millions):{" "}
+                          {stockValuation["Net Debt (Millions)"]}
+                        </li>
+                        <li style={styles.listItem}>
+                          Equity Value (Millions):{" "}
+                          {stockValuation["Equity Value (Millions)"]}
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+
+                  <div style={styles.column}>
+                    {news && (
+                      <div style={styles.newsContainer}>
+                        <div style={styles.newsSentimentOverview}>
+                          <h2 style={styles.newsHeader}>
+                            News Sentiment Overview
+                          </h2>
+                          <p style={styles.newsSentimentText}>
+                            <span style={styles.newsSentimentLabel}>
+                              Sentiment Score:
+                            </span>
+                            <span style={styles.newsSentimentValue}>
+                              {news.average_sentiment_score}
+                            </span>
+                          </p>
+                          <p style={styles.newsSentimentText}>
+                            <span style={styles.newsSentimentLabel}>
+                              Sentiment Category:
+                            </span>
+                            <span style={styles.newsSentimentValue}>
+                              {news.avg_sentiment_category}
+                            </span>
+                          </p>
+                        </div>
+
+                        {Object.keys(news.top_news).map((key) => (
+                          <div key={key} style={styles.newsItem}>
+                            <h3 style={styles.newsTitle}>
+                              {news.top_news[key].title}
+                            </h3>
+                            <p style={styles.newsText}>
+                              {news.top_news[key].text}
+                            </p>
+                            <a
+                              href={news.top_news[key].news_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={styles.newsLink}
+                            >
+                              Read more &rarr;
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
@@ -478,13 +493,20 @@ const styles = {
     fontSize: "20px",
     fontWeight: "bold",
   },
-  plotsContainer: {
+  resultColumns: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  resultColumn: {
+    flex: "0 0 48%",
+  },
+  plotsContainer: {
+    whiteSpace: "nowrap",
+  },
+  plotWrapper: {
+    display: "inline-block",
   },
   plot: {
-    width: "100%",
     marginBottom: "20px",
   },
   infoContainer: {

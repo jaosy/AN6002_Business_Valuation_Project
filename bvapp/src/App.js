@@ -3,7 +3,8 @@ import Plot from "react-plotly.js";
 import { BounceLoader } from "react-spinners"; // Import the spinner
 import sp500Json from "./sp500_tickers.json";
 import GeoChart from "./map.js";
-import ReactTooltip from 'react-tooltip';
+import {Tooltip} from 'react-tooltip';
+
 
 const industries = [
   ...new Set(
@@ -47,6 +48,53 @@ function App() {
     "Shareholder Rights Risk",
     "Overall Risk",
   ];
+
+  const getTooltipForKey = (key) => {
+    switch (key) {
+      case 'Current Price':
+        return 'The current trading price of a single share of the company\'s stock.';
+      case 'EBITDA':
+        return 'Earnings Before Interest, Taxes, Depreciation, and Amortization - a measure of a company\'s overall financial performance.';
+      case 'EPS':
+        return 'Earnings Per Share - the portion of a company\'s profit allocated to each outstanding share of common stock.';
+      case 'End Cash Position':
+        return 'The amount of cash the company has on hand at the end of a reporting period.';
+      case 'Gross Profit':
+        return 'Revenue minus the cost of goods sold.';
+      case 'High':
+        return 'The highest price at which a security traded during a period.';
+      case 'Low':
+        return 'The lowest price at which a security traded during a period.';
+      case 'Market Cap':
+        return 'Market Capitalization - the total value of all a company\'s outstanding shares.';
+      case 'P/E Ratio':
+        return 'Price-to-Earnings Ratio - the ratio of the market price per share to earnings per share.';
+      case 'Pre-tax Income':
+        return 'A company\'s income after deducting expenses but before accounting for income tax.';
+      case 'Total Assets':
+        return 'The sum of all assets owned by a company.';
+      case 'Total Liabilities':
+        return 'The sum of all a company\'s debts and obligations.';
+      case 'Enterprise Value':
+        return 'The total value of a company, including both its equity and debt. It represents the theoretical takeover price.';
+      case 'Net Debt':
+        return 'A company\'s total debt minus any cash and cash equivalents it has on hand.';
+      case 'Equity Value':
+        return 'The value of the company available to its shareholders (total assets minus total liabilities). Often referred to as "market cap" for publicly traded companies.';
+      case 'Audited Risk':
+        return 'This assesses the quality of the company’s financial reporting and internal controls, focusing on whether audits are conducted thoroughly and transparently.';
+      case 'Board Risk':
+        return 'This evaluates the structure and effectiveness of the board of directors, including its independence, diversity, and oversight.';
+      case 'Shareholder Rights Risk':
+        return 'This examines how well the company protects and upholds shareholder rights, such as voting rights and the ability to influence key decisions.';
+      case 'Compensation Risk':
+        return 'This focuses on executive compensation practices, looking at whether pay is aligned with performance and if there are excessive or unfair compensation packages.';
+      case 'Overall Risk':
+        return 'Overall governance risk is a key factor that affects a company’s reputation, operational efficiency, financial performance, and attractiveness to stakeholders.';
+      default:
+        return ``;
+    }
+  };
 
   const test = async (e) => {
     setLoading(true);
@@ -355,10 +403,26 @@ function App() {
             <h3 style={styles.infoHeader}>Summary Data</h3>
             <ul style={styles.list}>
               {Object.entries(stockData.summary_data).map(([key, value]) => (
-                <li key={key} style={styles.listItem}>
+                <li key={key} style={styles.listItem}  data-tooltip-id="tooltip"          // Link this element to the Tooltip component
+                data-tooltip-content={getTooltipForKey(key)}>
                   {key}: {value}
                 </li>
               ))}
+              <Tooltip
+                    id="tooltip"
+                    place="left"
+                    type="dark"
+                    effect="solid"
+                    style={{
+                      padding: '8px 12px',  // Adds padding to the tooltip
+                      borderRadius: '4px',  // Rounded corners
+                      fontSize: '12px',     // Small font size
+                      maxWidth: '200px',    // Max width to keep it box-like
+                      whiteSpace: 'normal', // Allows the text to wrap inside the box
+                      textAlign: 'center',  // Center the text in the tooltip
+                      wordWrap: 'break-word' // Ensures long words break correctly
+                    }}
+                  />
             </ul>
           </div>
           <div style={styles.infoContainer}>
@@ -376,11 +440,26 @@ function App() {
               {orderedKeys.map(
                 (key) =>
                   stockData.info[key] !== undefined && (
-                    <li key={key} style={styles.listItem}>
+                    <li key={key} style={styles.listItem}  data-tooltip-id="tooltip" data-tooltip-content={getTooltipForKey(key)}>
                       {key}: {stockData.info[key]}
                     </li>
                   )
               )}
+              <Tooltip
+                    id="tooltip"
+                    place="left"
+                    type="dark"
+                    effect="solid"
+                    style={{
+                      padding: '8px 12px',  // Adds padding to the tooltip
+                      borderRadius: '4px',  // Rounded corners
+                      fontSize: '12px',     // Small font size
+                      maxWidth: '200px',    // Max width to keep it box-like
+                      whiteSpace: 'normal', // Allows the text to wrap inside the box
+                      textAlign: 'center',  // Center the text in the tooltip
+                      wordWrap: 'break-word' // Ensures long words break correctly
+                    }}
+                  />
             </ul>
             <GeoChart
               sx={{ marginBottom: 0 }}
@@ -400,17 +479,35 @@ function App() {
               <ul style={styles.list}>
                 <li>Company Name: {stockValuation["Company Name"]}</li>
                 <li>Sector: {stockValuation.Sector}</li>
-                <li>
+                <li data-tooltip-id="tooltip"
+            data-tooltip-content={getTooltipForKey('Enterprise Value')}>
                   Enterprise Value (Millions):{" "}
                   {stockValuation["Enterprise Value (Millions)"]}
                 </li>
-                <li>
+                <li data-tooltip-id="tooltip"
+            data-tooltip-content={getTooltipForKey('Net Debt')}>
                   Net Debt (Millions): {stockValuation["Net Debt (Millions)"]}
                 </li>
-                <li>
+                <li data-tooltip-id="tooltip"
+            data-tooltip-content={getTooltipForKey('Equity Value')}>
                   Equity Value (Millions):{" "}
                   {stockValuation["Equity Value (Millions)"]}
                 </li>
+                <Tooltip
+                    id="tooltip"
+                    place="left"
+                    type="dark"
+                    effect="solid"
+                    style={{
+                      padding: '8px 12px',  // Adds padding to the tooltip
+                      borderRadius: '4px',  // Rounded corners
+                      fontSize: '12px',     // Small font size
+                      maxWidth: '200px',    // Max width to keep it box-like
+                      whiteSpace: 'normal', // Allows the text to wrap inside the box
+                      textAlign: 'center',  // Center the text in the tooltip
+                      wordWrap: 'break-word' // Ensures long words break correctly
+                    }}
+                  />
               </ul>
             </div>
           )}

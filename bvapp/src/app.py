@@ -68,18 +68,9 @@ def get_stock_data():
     # Get company summary metrics
     summary_data = get_company_summary(ticker, company_name, time_period)
 
-    result = {
-        "company": company_name,
-        "info": info,
-        "ticker_symbol": ticker,
-        "summary_data": summary_data,
-    }
 
-    company_bar_chartsJSON = generate_monetary_charts_1d(ticker, company_name)
+    industry_name = sp500Json[ticker]['GICS Sector']
 
-    result["monetary_plot"] = company_bar_chartsJSON
-
-    industry_name = sp500Json[ticker]["GICS Sector"]
 
     # get other companies in the same industry for basket comparison
     companies_in_industry = []
@@ -98,15 +89,22 @@ def get_stock_data():
     # Generate plots
     plotJSON = generate_timeseries_plot(stock_data, company_name)
     forecastPlotJSON = generate_arima_forecast_timeseries(ticker)
-    industryPEPlotJson = generate_industry_plot(
-        companies_in_industry, industry_name, ticker
-    )
+    industryPEPlotJson = generate_industry_plot(companies_in_industry, industry_name, ticker)
+    company_bar_chartsJSON = generate_monetary_charts_1d(ticker, company_name)
 
-    result["forecast_plot"] = forecastPlotJSON
-    result["plot"] = plotJSON
-    result["industry_pe_plot"] = industryPEPlotJson
+    result = {
+        "company": company_name,
+        "info": info,
+        "ticker_symbol": ticker,
+        "summary_data": summary_data,
+        "plot": plotJSON,  # Return the HTML content
+        "forecast_plot": forecastPlotJSON,
+        "summary_data": summary_data,
+        "monetary_plot": company_bar_chartsJSON,
+        "industry_plot": industryPEPlotJson
+    }
+    
 
-    print(result)
     return jsonify(result)
 
 

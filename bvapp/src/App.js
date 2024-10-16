@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Plot from "react-plotly.js";
-import { BounceLoader } from "react-spinners"; // Import the spinner
+import { BounceLoader } from "react-spinners";
 import sp500Json from "./sp500_tickers.json";
 import GeoChart from "./map.js";
 import {Tooltip} from 'react-tooltip';
@@ -30,8 +30,8 @@ function App() {
   const [industry, setIndustry] = useState("");
   const [company, setCompany] = useState("");
   const [timePeriod, setTimePeriod] = useState("");
-  const [stockData, setStockData] = useState(null); // State for stock data
-  const [stockValuation, setStockValuation] = useState(null); // State for stock valuation
+  const [stockData, setStockData] = useState(null);
+  const [stockValuation, setStockValuation] = useState(null);
   const [stockDataPlot, setStockDataPlot] = useState(null);
   const [forecastPlot, setForecastPlot] = useState(null);
   const [companyPlot, setCompanyPlot] = useState(null);
@@ -48,6 +48,7 @@ function App() {
     "Shareholder Rights Risk",
     "Overall Risk",
   ];
+
 
   const getTooltipForKey = (key) => {
     switch (key) {
@@ -97,33 +98,10 @@ function App() {
   };
 
   const test = async (e) => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/news", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          industry,
-          company,
-          time_period: timePeriod,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error fetching stock data");
-      }
-
-      const data = await response.json();
-      console.log(data);
-      setNews(data);
-      setLoading(false);
-    } catch (e) {}
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     try {
       const response = await fetch("/api/stock-data", {
@@ -146,11 +124,28 @@ function App() {
 
       setStockData(data);
       setCompanyPlot(JSON.parse(data["monetary_plot"]));
-      if (timePeriod == "1 day")
-        setCompanyPlot(JSON.parse(data["monetary_plot"]));
-      else setStockDataPlot(JSON.parse(data.plot));
       setForecastPlot(JSON.parse(data["forecast_plot"]));
-      setIndustryPEPlot(JSON.parse(data["industry_pe_plot"]));
+      setIndustryPEPlot(JSON.parse(data["industry_plot"]));
+      setStockDataPlot(JSON.parse(data["plot"]));
+
+      const newsResponse = await fetch("/api/news", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          industry,
+          company,
+          time_period: timePeriod,
+        }),
+      });
+
+      if (!newsResponse.ok) {
+        throw new Error("Error fetching stock data");
+      }
+
+      const newsData = await newsResponse.json();
+      setNews(newsData);
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -192,6 +187,8 @@ function App() {
             onChange={(e) => {
               setIndustry(e.target.value);
               setCompany("");
+              setStockData(null);
+              setNews(null);
             }}
             style={styles.select}
           >
@@ -207,13 +204,17 @@ function App() {
           <label style={styles.label}>Company:</label>
           <select
             value={company}
-            onChange={(e) => setCompany(e.target.value)}
+            onChange={(e) => {
+              setCompany(e.target.value);
+              setStockData(null);
+              setNews(null);
+            }}
             disabled={!industry}
             style={styles.select}
           >
             <option value="">Select Company</option>
             {Object.entries(sp500Json)
-              .filter(([ticker, data]) => data["GICS Sector"] === industry) // Filter by industry
+              .filter(([ticker, data]) => data["GICS Sector"] === industry)
               .map(([ticker, data]) => (
                 <option key={ticker} value={ticker}>
                   {data["Security"]}
@@ -225,7 +226,11 @@ function App() {
           <label style={styles.label}>Time Period:</label>
           <select
             value={timePeriod}
-            onChange={(e) => setTimePeriod(e.target.value)}
+            onChange={(e) => {
+              setTimePeriod(e.target.value);
+              setStockData(null);
+              setNews(null);
+            }}
             style={styles.select}
           >
             <option value="">Select Time Period</option>
@@ -237,8 +242,6 @@ function App() {
           </select>
         </div>
         <button
-          variant="contained"
-          color="primary"
           type="submit"
           disabled={timePeriod === "" || industry === "" || company === ""}
           style={
@@ -251,201 +254,97 @@ function App() {
         </button>
       </form>
 
-      <button
-        variant="contained"
-        color="primary"
-        type="submit"
-        onClick={() => test()}
-        disabled={timePeriod === "" || industry === "" || company === ""}
-        style={
-          timePeriod === "" || industry === "" || company === ""
-            ? styles.buttonDisabled
-            : styles.button
-        }
-      >
-        Get News
-      </button>
-
       {loading && (
         <div style={styles.loader}>
           <BounceLoader color="#007bff" loading={loading} size={50} />
         </div>
       )}
 
-      <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-        {news && (
-          <div
-            style={{
-              maxWidth: "800px",
-              margin: "0 auto",
-              backgroundColor: "#f9f9f9",
-              padding: "20px",
-              borderRadius: "10px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            {/* Render average sentiment score and category */}
-            <div
-              style={{
-                padding: "15px",
-                marginBottom: "20px",
-                backgroundColor: "#fff",
-                borderRadius: "8px",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <h2 style={{ margin: "0", color: "#333" }}>
-                News Sentiment Overview
-              </h2>
-              <p style={{ fontSize: "18px", margin: "10px 0" }}>
-                <span style={{ fontWeight: "bold", color: "#546e7a" }}>
-                  Sentiment Score:
-                </span>
-                <span
-                  style={{
-                    fontSize: "20px",
-                    color: "#546e7a",
-                    marginLeft: "10px",
-                  }}
-                >
-                  {news.average_sentiment_score}
-                </span>
-              </p>
-              <p style={{ fontSize: "18px", margin: "10px 0" }}>
-                <span style={{ fontWeight: "bold", color: "#546e7a" }}>
-                  Sentiment Category:
-                </span>
-                <span
-                  style={{
-                    fontSize: "20px",
-                    color: "#546e7a",
-                    marginLeft: "10px",
-                  }}
-                >
-                  {news.avg_sentiment_category}
-                </span>
-              </p>
-            </div>
+      <div style={styles.contentContainer}>
+        <div style={styles.column}>
+          {news && (
+            <div style={styles.newsContainer}>
+              <div style={styles.newsSentimentOverview}>
+                <h2 style={styles.newsHeader}>News Sentiment Overview</h2>
+                <p style={styles.newsSentimentText}>
+                  <span style={styles.newsSentimentLabel}>
+                    Sentiment Score:
+                  </span>
+                  <span style={styles.newsSentimentValue}>
+                    {news.average_sentiment_score}
+                  </span>
+                </p>
+                <p style={styles.newsSentimentText}>
+                  <span style={styles.newsSentimentLabel}>
+                    Sentiment Category:
+                  </span>
+                  <span style={styles.newsSentimentValue}>
+                    {news.avg_sentiment_category}
+                  </span>
+                </p>
+              </div>
 
-            {/* Map through top_news */}
-            <div>
               {Object.keys(news.top_news).map((key) => (
-                <div
-                  key={key}
-                  style={{
-                    padding: "15px",
-                    marginBottom: "20px",
-                    backgroundColor: "#fff",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  <h3
-                    style={{
-                      marginBottom: "10px",
-                      color: "#333",
-                      textAlign: "left",
-                    }}
-                  >
-                    {news.top_news[key].title}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: "16px",
-                      lineHeight: "1.6",
-                      color: "#555",
-                      textAlign: "left",
-                    }}
-                  >
-                    {news.top_news[key].text}
-                  </p>
+                <div key={key} style={styles.newsItem}>
+                  <h3 style={styles.newsTitle}>{news.top_news[key].title}</h3>
+                  <p style={styles.newsText}>{news.top_news[key].text}</p>
                   <a
                     href={news.top_news[key].news_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                      display: "inline-block",
-                      marginTop: "10px",
-                      fontSize: "16px",
-                      color: "#007BFF",
-                      textDecoration: "none",
-                    }}
+                    style={styles.newsLink}
                   >
                     Read more &rarr;
                   </a>
                 </div>
               ))}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {stockData && (
-        <div style={styles.resultContainer}>
-          <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
-          <div sx={{ display: "flex", flexDirection: "col" }}>
-            <div style={{ marginBottom: "20px" }}>
-              {" "}
-              {/* Optional margin for spacing */}
-              <Plot data={stockDataPlot.data} layout={stockDataPlot.layout} />
-            </div>
-            <div>
-              <Plot data={forecastPlot.data} layout={forecastPlot.layout} />
-            </div>
-            <div>
-              <Plot data={industryPEPlot.data} layout={industryPEPlot.layout} />
-            </div>
-            <div>
-              <Plot data={companyPlot.data} layout={companyPlot.layout} />
-            </div>
-          </div>
-          <div style={styles.infoContainer}>
-            <h3 style={styles.infoHeader}>Summary Data</h3>
-            <ul style={styles.list}>
-              {Object.entries(stockData.summary_data).map(([key, value]) => (
-                <li key={key} style={styles.listItem}  data-tooltip-id="tooltip"          // Link this element to the Tooltip component
-                data-tooltip-content={getTooltipForKey(key)}>
-                  {key}: {value}
-                </li>
-              ))}
-              <Tooltip
-                    id="tooltip"
-                    place="left"
-                    type="dark"
-                    effect="solid"
-                    style={{
-                      padding: '8px 12px',  // Adds padding to the tooltip
-                      borderRadius: '4px',  // Rounded corners
-                      fontSize: '12px',     // Small font size
-                      maxWidth: '200px',    // Max width to keep it box-like
-                      whiteSpace: 'normal', // Allows the text to wrap inside the box
-                      textAlign: 'center',  // Center the text in the tooltip
-                      wordWrap: 'break-word' // Ensures long words break correctly
-                    }}
-                  />
-            </ul>
-          </div>
-          <div style={styles.infoContainer}>
-            <h3 style={styles.infoHeader}>Company Info</h3>
-            {stockData["info"]["Company Logo"] && (
-              <div style={{ marginBottom: "10px" }}>
-                <img
-                  src={stockData["info"]["Company Logo"]}
-                  alt="Company Logo"
-                  style={{ width: "200px", height: "200px" }} // Adjust size as needed
+
+        <div style={styles.column}>
+          {stockData && (
+            <div style={styles.resultContainer}>
+              <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
+              <div style={styles.plotsContainer}>
+                {timePeriod !== "1 day" && (
+                  <>
+                    <Plot
+                      data={stockDataPlot.data}
+                      layout={stockDataPlot.layout}
+                      style={styles.plot}
+                    />
+                    <Plot
+                      data={forecastPlot.data}
+                      layout={forecastPlot.layout}
+                      style={styles.plot}
+                    />
+                  </>
+                )}
+                <Plot
+                  data={industryPEPlot.data}
+                  layout={industryPEPlot.layout}
+                  style={styles.plot}
+                />
+                <Plot
+                  data={companyPlot.data}
+                  layout={companyPlot.layout}
+                  style={styles.plot}
                 />
               </div>
-            )}
-            <ul style={styles.list}>
-              {orderedKeys.map(
-                (key) =>
-                  stockData.info[key] !== undefined && (
-                    <li key={key} style={styles.listItem}  data-tooltip-id="tooltip" data-tooltip-content={getTooltipForKey(key)}>
-                      {key}: {stockData.info[key]}
-                    </li>
-                  )
-              )}
-              <Tooltip
+              <div style={styles.infoContainer}>
+                <h3 style={styles.infoHeader}>Summary Data</h3>
+                <ul style={styles.list}>
+                  {Object.entries(stockData.summary_data).map(
+                    ([key, value]) => (
+                      <li key={key} style={styles.listItem} data-tooltip-id="tooltip"          // Link this element to the Tooltip component
+                data-tooltip-content={getTooltipForKey(key)}>
+                        {key}: {value}
+                      </li>
+                    )
+                  )}
+                  <Tooltip
                     id="tooltip"
                     place="left"
                     type="dark"
@@ -460,40 +359,82 @@ function App() {
                       wordWrap: 'break-word' // Ensures long words break correctly
                     }}
                   />
-            </ul>
-            <GeoChart
-              sx={{ marginBottom: 0 }}
-              state={
-                stockData.info["Address"]
-                  .split(",")[2]
-                  .trim()
-                  .split(" ")
-                  .slice(-2, -1)[0]
-              }
-            />
-          </div>
+                </ul>
+              </div>
+              <div style={styles.infoContainer}>
+                <h3 style={styles.infoHeader}>Company Info</h3>
+                {stockData["info"]["Company Logo"] && (
+                  <div style={styles.logoContainer}>
+                    <img
+                      src={stockData["info"]["Company Logo"]}
+                      alt="Company Logo"
+                      style={styles.logo}
+                    />
+                  </div>
+                )}
+                <ul style={styles.list}>
+                  {orderedKeys.map(
+                    (key) =>
+                      stockData.info[key] !== undefined && (
+                        <li key={key} style={styles.listItem} data-tooltip-id="tooltip"          // Link this element to the Tooltip component
+                data-tooltip-content={getTooltipForKey(key)}>
+                          {key}: {stockData.info[key]}
+                        </li>
+                      )
+                  )}
+                  <Tooltip
+                    id="tooltip"
+                    place="left"
+                    type="dark"
+                    effect="solid"
+                    style={{
+                      padding: '8px 12px',  // Adds padding to the tooltip
+                      borderRadius: '4px',  // Rounded corners
+                      fontSize: '12px',     // Small font size
+                      maxWidth: '200px',    // Max width to keep it box-like
+                      whiteSpace: 'normal', // Allows the text to wrap inside the box
+                      textAlign: 'center',  // Center the text in the tooltip
+                      wordWrap: 'break-word' // Ensures long words break correctly
+                    }}
+                  />
+                </ul>
+                <GeoChart
+                  state={
+                    stockData.info["Address"]
+                      .split(",")[2]
+                      .trim()
+                      .split(" ")
+                      .slice(-2, -1)[0]
+                  }
+                />
+              </div>
 
-          {stockValuation && (
-            <div style={styles.infoContainer}>
-              <h3 style={styles.infoHeader}>Valuation Details</h3>
-              <ul style={styles.list}>
-                <li>Company Name: {stockValuation["Company Name"]}</li>
-                <li>Sector: {stockValuation.Sector}</li>
-                <li data-tooltip-id="tooltip"
+              {stockValuation && (
+                <div style={styles.infoContainer}>
+                  <h3 style={styles.infoHeader}>Valuation Details</h3>
+                  <ul style={styles.list}>
+                    <li style={styles.listItem}>
+                      Company Name: {stockValuation["Company Name"]}
+                    </li>
+                    <li style={styles.listItem}>
+                      Sector: {stockValuation.Sector}
+                    </li>
+                    <li style={styles.listItem} data-tooltip-id="tooltip"
             data-tooltip-content={getTooltipForKey('Enterprise Value')}>
-                  Enterprise Value (Millions):{" "}
-                  {stockValuation["Enterprise Value (Millions)"]}
-                </li>
-                <li data-tooltip-id="tooltip"
+                      Enterprise Value (Millions):{" "}
+                      {stockValuation["Enterprise Value (Millions)"]}
+                    </li>
+                    <li style={styles.listItem} data-tooltip-id="tooltip"
             data-tooltip-content={getTooltipForKey('Net Debt')}>
-                  Net Debt (Millions): {stockValuation["Net Debt (Millions)"]}
-                </li>
-                <li data-tooltip-id="tooltip"
+                      Net Debt (Millions):{" "}
+                      {stockValuation["Net Debt (Millions)"]}
+                    </li>
+                    <li style={styles.listItem} data-tooltip-id="tooltip"
             data-tooltip-content={getTooltipForKey('Equity Value')}>
-                  Equity Value (Millions):{" "}
-                  {stockValuation["Equity Value (Millions)"]}
-                </li>
-                <Tooltip
+                      Equity Value (Millions):{" "}
+                      {stockValuation["Equity Value (Millions)"]}
+                    </li>
+                  <Tooltip
                     id="tooltip"
                     place="left"
                     type="dark"
@@ -508,11 +449,13 @@ function App() {
                       wordWrap: 'break-word' // Ensures long words break correctly
                     }}
                   />
-              </ul>
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -520,26 +463,25 @@ function App() {
 const styles = {
   app: {
     fontFamily: "Arial, sans-serif",
-    maxWidth: "800px",
     margin: "0 auto",
     padding: "20px",
-    textAlign: "center",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+    maxWidth: "100%",
   },
   header: {
     color: "#333",
     marginBottom: "20px",
+    textAlign: "center",
   },
   form: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    marginBottom: "20px",
   },
   formGroup: {
     marginBottom: "15px",
     width: "100%",
+    maxWidth: "400px",
   },
   label: {
     display: "block",
@@ -575,37 +517,92 @@ const styles = {
     backgroundColor: "#ccc",
     cursor: "not-allowed",
   },
-  resultContainer: {
-    position: "relative",
-    marginTop: "20px",
-    textAlign: "left",
-    padding: "20px",
-    backgroundColor: "#fff",
+  contentContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+  },
+  column: {
+    flex: "0 0 48%",
+    marginBottom: "20px",
+  },
+  newsContainer: {
+    marginBottom: "20px",
+  },
+  newsSentimentOverview: {
+    backgroundColor: "#f0f8ff",
+    padding: "15px",
     borderRadius: "8px",
-    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+    marginBottom: "20px",
+  },
+  newsHeader: {
+    fontSize: "20px",
+    marginBottom: "10px",
+    color: "#333",
+  },
+  newsSentimentText: {
+    fontSize: "16px",
+    margin: "5px 0",
+  },
+  newsSentimentLabel: {
+    fontWeight: "bold",
+    marginRight: "10px",
+  },
+  newsSentimentValue: {
+    color: "#007bff",
+  },
+  newsItem: {
+    backgroundColor: "#fff",
+    padding: "15px",
+    borderRadius: "8px",
+    marginBottom: "15px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  },
+  newsTitle: {
+    fontSize: "18px",
+    marginBottom: "10px",
+    color: "#333",
+  },
+  newsText: {
+    fontSize: "14px",
+    lineHeight: "1.6",
+    color: "#555",
+  },
+  newsLink: {
+    display: "inline-block",
+    marginTop: "10px",
+    color: "#007bff",
+    textDecoration: "none",
+  },
+  resultContainer: {
+    marginBottom: "20px",
   },
   resultHeader: {
     marginBottom: "10px",
     fontSize: "20px",
     fontWeight: "bold",
   },
-  plotContainer: {
+  plotsContainer: {
     display: "flex",
-    justifyContent: "center",
-    marginBottom: "15px",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  plot: {
+    width: "100%",
+    marginBottom: "20px",
   },
   infoContainer: {
     marginTop: "15px",
     padding: "15px",
     borderRadius: "8px",
-    backgroundColor: "#f0f8ff", // Light blue background for info sections
+    backgroundColor: "#f0f8ff",
     boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
   },
   infoHeader: {
     marginBottom: "10px",
     fontSize: "18px",
     fontWeight: "bold",
-    color: "#007bff", // Bootstrap primary color
+    color: "#007bff",
   },
   list: {
     listStyleType: "none",

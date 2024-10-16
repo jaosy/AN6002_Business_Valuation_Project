@@ -135,6 +135,8 @@ function App() {
             onChange={(e) => {
               setIndustry(e.target.value);
               setCompany("");
+              setStockData(null);
+              setNews(null);
             }}
             style={styles.select}
           >
@@ -150,7 +152,11 @@ function App() {
           <label style={styles.label}>Company:</label>
           <select
             value={company}
-            onChange={(e) => setCompany(e.target.value)}
+            onChange={(e) => {
+              setCompany(e.target.value);
+              setStockData(null);
+              setNews(null);
+            }}
             disabled={!industry}
             style={styles.select}
           >

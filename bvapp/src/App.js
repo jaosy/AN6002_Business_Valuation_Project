@@ -358,7 +358,7 @@ function App() {
                         style={{
                           padding: "8px 12px", // Adds padding to the tooltip
                           borderRadius: "4px", // Rounded corners
-                          fontSize: "12px", // Small font size
+                          fontSize: "20px", // Small font size
                           maxWidth: "200px", // Max width to keep it box-like
                           whiteSpace: "normal", // Allows the text to wrap inside the box
                           textAlign: "center", // Center the text in the tooltip
@@ -414,7 +414,7 @@ function App() {
                           style={{
                             padding: "8px 12px", // Adds padding to the tooltip
                             borderRadius: "4px", // Rounded corners
-                            fontSize: "12px", // Small font size
+                            fontSize: "20px", // Small font size
                             maxWidth: "200px", // Max width to keep it box-like
                             whiteSpace: "normal", // Allows the text to wrap inside the box
                             textAlign: "center", // Center the text in the tooltip

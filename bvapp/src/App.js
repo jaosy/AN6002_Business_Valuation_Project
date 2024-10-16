@@ -3,6 +3,8 @@ import Plot from "react-plotly.js";
 import { BounceLoader } from "react-spinners";
 import sp500Json from "./sp500_tickers.json";
 import GeoChart from "./map.js";
+import {Tooltip} from 'react-tooltip';
+
 
 const industries = [
   ...new Set(
@@ -47,8 +49,59 @@ function App() {
     "Overall Risk",
   ];
 
+
+  const getTooltipForKey = (key) => {
+    switch (key) {
+      case 'Current Price':
+        return 'The current trading price of a single share of the company\'s stock.';
+      case 'EBITDA':
+        return 'Earnings Before Interest, Taxes, Depreciation, and Amortization - a measure of a company\'s overall financial performance.';
+      case 'EPS':
+        return 'Earnings Per Share - the portion of a company\'s profit allocated to each outstanding share of common stock.';
+      case 'End Cash Position':
+        return 'The amount of cash the company has on hand at the end of a reporting period.';
+      case 'Gross Profit':
+        return 'Revenue minus the cost of goods sold.';
+      case 'High':
+        return 'The highest price at which a security traded during a period.';
+      case 'Low':
+        return 'The lowest price at which a security traded during a period.';
+      case 'Market Cap':
+        return 'Market Capitalization - the total value of all a company\'s outstanding shares.';
+      case 'P/E Ratio':
+        return 'Price-to-Earnings Ratio - the ratio of the market price per share to earnings per share.';
+      case 'Pre-tax Income':
+        return 'A company\'s income after deducting expenses but before accounting for income tax.';
+      case 'Total Assets':
+        return 'The sum of all assets owned by a company.';
+      case 'Total Liabilities':
+        return 'The sum of all a company\'s debts and obligations.';
+      case 'Enterprise Value':
+        return 'The total value of a company, including both its equity and debt. It represents the theoretical takeover price.';
+      case 'Net Debt':
+        return 'A company\'s total debt minus any cash and cash equivalents it has on hand.';
+      case 'Equity Value':
+        return 'The value of the company available to its shareholders (total assets minus total liabilities). Often referred to as "market cap" for publicly traded companies.';
+      case 'Audited Risk':
+        return 'This assesses the quality of the company’s financial reporting and internal controls, focusing on whether audits are conducted thoroughly and transparently.';
+      case 'Board Risk':
+        return 'This evaluates the structure and effectiveness of the board of directors, including its independence, diversity, and oversight.';
+      case 'Shareholder Rights Risk':
+        return 'This examines how well the company protects and upholds shareholder rights, such as voting rights and the ability to influence key decisions.';
+      case 'Compensation Risk':
+        return 'This focuses on executive compensation practices, looking at whether pay is aligned with performance and if there are excessive or unfair compensation packages.';
+      case 'Overall Risk':
+        return 'Overall governance risk is a key factor that affects a company’s reputation, operational efficiency, financial performance, and attractiveness to stakeholders.';
+      default:
+        return ``;
+    }
+  };
+
+  const test = async (e) => {
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     try {
       const response = await fetch("/api/stock-data", {
@@ -128,7 +181,7 @@ function App() {
       <h1 style={styles.header}>Stock Data Viewer</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Industry:</label>
+          <label style={styles.label} data-tip="Choose a company from the selected industry.">Industry:</label>
           <select
             value={industry}
             onChange={(e) => {

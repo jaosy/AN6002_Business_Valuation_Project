@@ -33,6 +33,8 @@ function App() {
   const [stockValuation, setStockValuation] = useState(null); // State for stock valuation
   const [stockDataPlot, setStockDataPlot] = useState(null);
   const [forecastPlot, setForecastPlot] = useState(null);
+  const [companyPlot, setCompanyPlot] = useState(null);
+  const [industryPEPlot, setIndustryPEPlot] = useState(null);
   const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(false);
   const orderedKeys = [
@@ -46,17 +48,15 @@ function App() {
     "Overall Risk",
   ];
 
-
   const test = async (e) => {
     setLoading(true);
     try {
-      const response = await fetch('/api/news', {
-        method: 'POST',
+      const response = await fetch("/api/news", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          
           industry,
           company,
           time_period: timePeriod,
@@ -64,18 +64,15 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Error fetching stock data');
+        throw new Error("Error fetching stock data");
       }
 
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       setNews(data);
       setLoading(false);
-
-    } catch (e) {
-
-    }
-  }
+    } catch (e) {}
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,9 +95,14 @@ function App() {
       }
 
       const data = await response.json();
+
       setStockData(data);
-      setStockDataPlot(JSON.parse(data.plot));
+      setCompanyPlot(JSON.parse(data["monetary_plot"]));
+      if (timePeriod == "1 day")
+        setCompanyPlot(JSON.parse(data["monetary_plot"]));
+      else setStockDataPlot(JSON.parse(data.plot));
       setForecastPlot(JSON.parse(data["forecast_plot"]));
+      setIndustryPEPlot(JSON.parse(data["industry_pe_plot"]));
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -201,16 +203,20 @@ function App() {
         </button>
       </form>
 
-      <button 
-          variant="contained" 
-          color="primary" 
-          type="submit" 
-          onClick={() => test()}
-          disabled={timePeriod === '' || industry === '' || company === ''}
-          style={timePeriod === '' || industry === '' || company === '' ? styles.buttonDisabled : styles.button}
-        >
-          Get News
-        </button>
+      <button
+        variant="contained"
+        color="primary"
+        type="submit"
+        onClick={() => test()}
+        disabled={timePeriod === "" || industry === "" || company === ""}
+        style={
+          timePeriod === "" || industry === "" || company === ""
+            ? styles.buttonDisabled
+            : styles.button
+        }
+      >
+        Get News
+      </button>
 
       {loading && (
         <div style={styles.loader}>
@@ -218,43 +224,113 @@ function App() {
         </div>
       )}
 
-<div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-  {news && (
-    <div style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-      
-      {/* Render average sentiment score and category */}
-      <div style={{ padding: '15px', marginBottom: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-        <h2 style={{ margin: '0', color: '#333' }}>News Sentiment Overview</h2>
-        <p style={{ fontSize: '18px', margin: '10px 0' }}>
-          <span style={{ fontWeight: 'bold', color: '#546e7a' }}>Sentiment Score:</span> 
-          <span style={{ fontSize: '20px', color: '#546e7a', marginLeft: '10px' }}>{news.average_sentiment_score}</span>
-        </p>
-        <p style={{ fontSize: '18px', margin: '10px 0' }}>
-          <span style={{ fontWeight: 'bold', color: '#546e7a' }}>Sentiment Category:</span> 
-          <span style={{ fontSize: '20px', color: '#546e7a', marginLeft: '10px' }}>{news.avg_sentiment_category}</span>
-        </p>
-      </div>
+      <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+        {news && (
+          <div
+            style={{
+              maxWidth: "800px",
+              margin: "0 auto",
+              backgroundColor: "#f9f9f9",
+              padding: "20px",
+              borderRadius: "10px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            {/* Render average sentiment score and category */}
+            <div
+              style={{
+                padding: "15px",
+                marginBottom: "20px",
+                backgroundColor: "#fff",
+                borderRadius: "8px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <h2 style={{ margin: "0", color: "#333" }}>
+                News Sentiment Overview
+              </h2>
+              <p style={{ fontSize: "18px", margin: "10px 0" }}>
+                <span style={{ fontWeight: "bold", color: "#546e7a" }}>
+                  Sentiment Score:
+                </span>
+                <span
+                  style={{
+                    fontSize: "20px",
+                    color: "#546e7a",
+                    marginLeft: "10px",
+                  }}
+                >
+                  {news.average_sentiment_score}
+                </span>
+              </p>
+              <p style={{ fontSize: "18px", margin: "10px 0" }}>
+                <span style={{ fontWeight: "bold", color: "#546e7a" }}>
+                  Sentiment Category:
+                </span>
+                <span
+                  style={{
+                    fontSize: "20px",
+                    color: "#546e7a",
+                    marginLeft: "10px",
+                  }}
+                >
+                  {news.avg_sentiment_category}
+                </span>
+              </p>
+            </div>
 
-      {/* Map through top_news */}
-      <div>
-        {Object.keys(news.top_news).map((key) => (
-          <div key={key} style={{ padding: '15px', marginBottom: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-            <h3 style={{ marginBottom: '10px', color: '#333', textAlign: 'left' }}>
-              {news.top_news[key].title}
-            </h3>
-            <p style={{ fontSize: '16px', lineHeight: '1.6', color: '#555',textAlign: 'left' }}>
-              {news.top_news[key].text}
-            </p>
-            <a href={news.top_news[key].news_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: '10px', fontSize: '16px', color: '#007BFF', textDecoration: 'none' }}>
-              Read more &rarr;
-            </a>
+            {/* Map through top_news */}
+            <div>
+              {Object.keys(news.top_news).map((key) => (
+                <div
+                  key={key}
+                  style={{
+                    padding: "15px",
+                    marginBottom: "20px",
+                    backgroundColor: "#fff",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <h3
+                    style={{
+                      marginBottom: "10px",
+                      color: "#333",
+                      textAlign: "left",
+                    }}
+                  >
+                    {news.top_news[key].title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      lineHeight: "1.6",
+                      color: "#555",
+                      textAlign: "left",
+                    }}
+                  >
+                    {news.top_news[key].text}
+                  </p>
+                  <a
+                    href={news.top_news[key].news_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-block",
+                      marginTop: "10px",
+                      fontSize: "16px",
+                      color: "#007BFF",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Read more &rarr;
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+        )}
       </div>
-    </div>
-  )}
-</div>
-
 
       {stockData && (
         <div style={styles.resultContainer}>
@@ -267,6 +343,12 @@ function App() {
             </div>
             <div>
               <Plot data={forecastPlot.data} layout={forecastPlot.layout} />
+            </div>
+            <div>
+              <Plot data={industryPEPlot.data} layout={industryPEPlot.layout} />
+            </div>
+            <div>
+              <Plot data={companyPlot.data} layout={companyPlot.layout} />
             </div>
           </div>
           <div style={styles.infoContainer}>
@@ -286,7 +368,7 @@ function App() {
                 <img
                   src={stockData["info"]["Company Logo"]}
                   alt="Company Logo"
-                  style={{ width: "200px", height: "auto" }} // Adjust size as needed
+                  style={{ width: "200px", height: "200px" }} // Adjust size as needed
                 />
               </div>
             )}
@@ -328,10 +410,6 @@ function App() {
                 <li>
                   Equity Value (Millions):{" "}
                   {stockValuation["Equity Value (Millions)"]}
-                </li>
-                <li>
-                  Intrinsic Value per Share:{" "}
-                  {stockValuation["Intrinsic Value per Share"]}
                 </li>
               </ul>
             </div>

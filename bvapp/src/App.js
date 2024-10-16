@@ -97,11 +97,9 @@ function App() {
 
       setStockData(data);
       setCompanyPlot(JSON.parse(data["monetary_plot"]));
-      if (timePeriod == "1 day")
-        setCompanyPlot(JSON.parse(data["monetary_plot"]));
-      else setStockDataPlot(JSON.parse(data.plot));
       setForecastPlot(JSON.parse(data["forecast_plot"]));
-      setIndustryPEPlot(JSON.parse(data["industry_pe_plot"]));
+      setIndustryPEPlot(JSON.parse(data["industry_plot"]));
+      setStockDataPlot(JSON.parse(data["plot"]));
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -176,7 +174,10 @@ function App() {
           <label style={styles.label}>Time Period:</label>
           <select
             value={timePeriod}
-            onChange={(e) => setTimePeriod(e.target.value)}
+            onChange={(e) => {
+              setTimePeriod(e.target.value);
+              setStockData(null);
+            }}
             style={styles.select}
           >
             <option value="">Select Time Period</option>
@@ -336,12 +337,20 @@ function App() {
           <h2 style={styles.resultHeader}>{stockData.company} Overview</h2>
           <div sx={{ display: "flex", flexDirection: "col" }}>
             <div style={{ marginBottom: "20px" }}>
-              {" "}
-              {/* Optional margin for spacing */}
-              <Plot data={stockDataPlot.data} layout={stockDataPlot.layout} />
-            </div>
-            <div>
-              <Plot data={forecastPlot.data} layout={forecastPlot.layout} />
+              {timePeriod !== "1 day" && (
+                <>
+                  <Plot
+                    data={stockDataPlot.data}
+                    layout={stockDataPlot.layout}
+                  />
+                  <div>
+                    <Plot
+                      data={forecastPlot.data}
+                      layout={forecastPlot.layout}
+                    />
+                  </div>
+                </>
+              )}
             </div>
             <div>
               <Plot data={industryPEPlot.data} layout={industryPEPlot.layout} />
